@@ -25,6 +25,7 @@ const PrivateRoute = () => {
         });
 
         const data = await res.json();
+        console.log(data)
 
         if (res.ok) {
           setIsAuthenticated(true);
