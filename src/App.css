@@ -1,0 +1,42 @@
+.color{
+   color:#18185E ; 
+}
+.bg{
+    background: #18185E;
+}
+
+.p{
+    color: #919191 ;
+}
+p{
+    font-family: "Plus Jakarta Sans", "Plus Jakarta Sans Fallback", sans-serif;
+    color:#18185E;
+}
+p,h1,h2,h3,h4,h5,h6{
+    color:#18185E;
+}
+input, textarea{
+    @apply my-[5px] border px-[10px] border w-[100%] py-[10px] rounded-[5px] my-[5px]
+}
+.input{
+    @apply px-[10px] border w-[100%] py-[10px] rounded-[5px] my-[5px] 
+}
+input:focus,textarea:focus{
+    @apply ring-[#18185E] ring-2 outline-0  
+}
+.btn{
+    @apply bg-[#18185E] text-white w-full py-[10px] rounded-[5px] duration-500 hover:scale-[1.02]
+}
+.ld{
+    border-right: 1px solid rgb(199, 199, 199);
+}
+.input2{
+    @apply border border-gray-300 rounded-[4px] px-[10px] py-[10px] text-[18px] font-semibold  
+}
+.input2:focus{
+    @apply outline-none
+}
+textarea{
+    min-height: 110px;
+    @apply border
+}
