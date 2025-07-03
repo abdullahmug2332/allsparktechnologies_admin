@@ -47,7 +47,6 @@ const Login: React.FC = () => {
             })
           );
           localStorage.setItem("token", data.token);
-          alert("Login Successful");
           navigate("/");
         } else {
           alert(data.error || "Login Failed");
