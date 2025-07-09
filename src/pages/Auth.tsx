@@ -7,6 +7,7 @@ import { PiSmileySad } from "react-icons/pi";
 import { useDispatch } from "react-redux";
 import { setUser } from "../redux/userSlice";
 import { baseURL } from "../../API/baseURL";
+import Loader from "../components/Loader";
 
 const Login: React.FC = () => {
   const [toogle, setToogle] = useState<boolean>(false);
@@ -14,6 +15,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState<string>("");
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     if (password.length >= 8) {
@@ -27,6 +29,7 @@ const Login: React.FC = () => {
       setToogle(true);
     } else {
       try {
+        setIsLoading(true);
         const res = await fetch(`${baseURL}/auth`, {
           method: "POST",
           headers: {
@@ -38,7 +41,7 @@ const Login: React.FC = () => {
         const data = await res.json();
 
         if (res.ok) {
-          console.log("Login Successful");
+          
           dispatch(
             setUser({
               name: data.user.name,
@@ -47,19 +50,24 @@ const Login: React.FC = () => {
             })
           );
           localStorage.setItem("token", data.token);
+          setIsLoading(false);
           navigate("/");
         } else {
           alert(data.error || "Login Failed");
+          setIsLoading(false);
         }
       } catch (err) {
         console.error("Error:", err);
         alert("Something went wrong");
+      }finally{
+        setIsLoading(false);
       }
     }
   };
 
   return (
     <section className="bg-blue-100 min-h-[100vh] py-[60px]">
+      {isLoading && <Loader />}
       <div className="w-[95%] md:w-[80%] min-h-[600px] bg-white mx-auto border p-[30px] flex items-center relative">
         <div className="w-[45%] hidden md:block ">
           <div>

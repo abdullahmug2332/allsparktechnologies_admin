@@ -3,6 +3,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 import { baseURL } from "../../API/baseURL";
+import Loader from "../components/Loader";
 
 interface HeroData {
   texts: string[];
@@ -93,6 +94,7 @@ interface HomeData {
 }
 
 const EditHomeData: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<HomeData | null>(null);
   const toggle = useSelector((state: RootState) => state.toggle.value);
   const [metadataText, setMetadataText] = useState("");
@@ -104,25 +106,29 @@ const EditHomeData: React.FC = () => {
       setData(res.data);
       setMetadataText(JSON.stringify(res.data.metadata || {}, null, 2));
       setScriptText(JSON.stringify(res.data.script || {}, null, 2));
+      setIsLoading(false);
     };
     fetchData();
   }, []);
 
   const handleSave = async () => {
+    setIsLoading(true);
+
     try {
       const parsedMetadata = JSON.parse(metadataText);
       const parsedScript = JSON.parse(scriptText);
-
       const updatedData = {
         ...data,
         metadata: parsedMetadata,
         script: parsedScript,
       };
       await axios.put(`${baseURL}/homedata`, updatedData);
-      alert("Data updated successfully");
+      setIsLoading(false);
     } catch (err) {
       console.error(err);
       alert("Error updating data");
+    } finally {
+      setIsLoading(false);
     }
   };
   const handleDynamicImageUpload = async (
@@ -137,10 +143,8 @@ const EditHomeData: React.FC = () => {
     formData.append("imageKey", imageKey); // e.g., 'logos[0].src'
 
     try {
-      const res = await axios.post(
-        `${baseURL}/upload-home-image`,
-        formData
-      );
+      setIsLoading(true);
+      const res = await axios.post(`${baseURL}/upload-home-image`, formData);
       const imagePath = res.data.path;
 
       // ✅ Update local state (data)
@@ -161,15 +165,20 @@ const EditHomeData: React.FC = () => {
         return newData;
       });
 
-      alert(`${imageKey} updated`);
+      setIsLoading(false);
     } catch (err) {
       console.error(err);
       alert(`Failed to upload image for ${imageKey}`);
+    } finally {
+      setIsLoading(false);
     }
   };
-
-  if (!data) return <div>Loading...</div>;
-
+  if (!data)
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
   return (
     <>
       <div
@@ -179,6 +188,8 @@ const EditHomeData: React.FC = () => {
             : "md:w-[80%] lg:w-[82%] xl:w-[85%] 2xl:w-[87%]"
         } duration-500  font-semibold ml-auto py-[20px] px-[30px] mt-[40px] p-6  space-y-9`}
       >
+        {isLoading && <Loader />}
+
         <h1 className="color text-[32px] font-semibold my-[10px]">
           Hero Section
         </h1>
@@ -245,7 +256,10 @@ const EditHomeData: React.FC = () => {
               </h2>
               <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-[10px] my-[10px]">
                 {data?.logos?.map((logo, index) => (
-                  <div key={index} className="my-[30px] flex flex-col gap-[10px]">
+                  <div
+                    key={index}
+                    className="my-[30px] flex flex-col gap-[10px]"
+                  >
                     <h2 className="color text-[18px] font-semibold">
                       Logo {index + 1}:
                     </h2>
@@ -315,7 +329,10 @@ const EditHomeData: React.FC = () => {
                 <div>
                   <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-[10px] my-[10px]">
                     {data?.homeServices?.allServices?.map((service, index) => (
-                      <div key={index} className="my-[30px] flex flex-col gap-[5px]">
+                      <div
+                        key={index}
+                        className="my-[30px] flex flex-col gap-[5px]"
+                      >
                         <h2 className="color text-[18px] font-semibold">
                           Service {index + 1}:
                         </h2>
@@ -464,7 +481,10 @@ const EditHomeData: React.FC = () => {
                   src={`${baseURL}/images/home/${data?.about?.img1}`}
                   className="h-[300px] object-cover"
                 />
-                <input type="file" onChange={(e) => handleDynamicImageUpload(e, "about.img1")}/>
+                <input
+                  type="file"
+                  onChange={(e) => handleDynamicImageUpload(e, "about.img1")}
+                />
                 <button
                   className="bg text-white px-4 py-2 rounded mt-1"
                   onClick={handleSave}
@@ -477,7 +497,10 @@ const EditHomeData: React.FC = () => {
                   src={`${baseURL}/images/home/${data?.about?.img2} `}
                   className="h-[300px] object-cover"
                 />
-                <input type="file" onChange={(e) => handleDynamicImageUpload(e, "about.img2")}/>
+                <input
+                  type="file"
+                  onChange={(e) => handleDynamicImageUpload(e, "about.img2")}
+                />
                 <button
                   className="bg text-white px-4 py-2 rounded mt-1"
                   onClick={handleSave}
@@ -490,7 +513,10 @@ const EditHomeData: React.FC = () => {
                   src={`${baseURL}/images/home/${data?.about?.img3}`}
                   className="h-[300px] object-cover"
                 />
-                <input type="file"  onChange={(e) => handleDynamicImageUpload(e, "about.img3")}/>
+                <input
+                  type="file"
+                  onChange={(e) => handleDynamicImageUpload(e, "about.img3")}
+                />
                 <button
                   className="bg text-white px-4 py-2 rounded mt-1"
                   onClick={handleSave}
@@ -615,7 +641,10 @@ const EditHomeData: React.FC = () => {
                   src={`${baseURL}/images/home/${data?.faq?.img1}`}
                   className="h-[300px] object-cover"
                 />
-                <input type="file" onChange={(e) => handleDynamicImageUpload(e, "faq.img1")}/>
+                <input
+                  type="file"
+                  onChange={(e) => handleDynamicImageUpload(e, "faq.img1")}
+                />
                 <button
                   className="bg text-white px-4 py-2 rounded mt-1"
                   onClick={handleSave}
@@ -628,7 +657,10 @@ const EditHomeData: React.FC = () => {
                   src={`${baseURL}/images/home/${data?.faq?.img2} `}
                   className="h-[300px] object-cover"
                 />
-                <input type="file" onChange={(e) => handleDynamicImageUpload(e, "faq.img2")}/>
+                <input
+                  type="file"
+                  onChange={(e) => handleDynamicImageUpload(e, "faq.img2")}
+                />
                 <button
                   className="bg text-white px-4 py-2 rounded mt-1"
                   onClick={handleSave}
@@ -641,7 +673,10 @@ const EditHomeData: React.FC = () => {
                   src={`${baseURL}/images/home/${data?.faq?.img3}`}
                   className="h-[300px] object-cover"
                 />
-                <input type="file" onChange={(e) => handleDynamicImageUpload(e, "faq.img3")}/>
+                <input
+                  type="file"
+                  onChange={(e) => handleDynamicImageUpload(e, "faq.img3")}
+                />
                 <button
                   className="bg text-white px-4 py-2 rounded mt-1"
                   onClick={handleSave}
@@ -714,7 +749,13 @@ const EditHomeData: React.FC = () => {
                   alt="Banner"
                   className="w-[200px] h-auto mb-2"
                 />
-                <input type="file" className="block my-2" onChange={(e) => handleDynamicImageUpload(e, "contactBanner.img")}/>
+                <input
+                  type="file"
+                  className="block my-2"
+                  onChange={(e) =>
+                    handleDynamicImageUpload(e, "contactBanner.img")
+                  }
+                />
               </div>
               <button
                 className="bg text-white px-4 py-2 rounded"

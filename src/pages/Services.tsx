@@ -3,6 +3,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 import { baseURL } from "../../API/baseURL";
+import Loader from "../components/Loader";
 
 interface Breadcrumb {
   label: string;
@@ -74,7 +75,7 @@ const EditServicePage = () => {
     "live-chat-support",
     "digital-marketing-and-seo",
   ];
-
+  const [isLoading, setIsLoading] = useState(false);
   const toggle = useSelector((state: RootState) => state.toggle.value);
   const [data, setData] = useState<ServiceData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -101,19 +102,23 @@ const EditServicePage = () => {
   };
 
   const handleSave = async () => {
+    setIsLoading(true);
     try {
       await axios.put(`${baseURL}/service`, {
         name: selectedName,
         json: data,
       });
-      alert("Service page updated successfully!");
+      setIsLoading(false);
     } catch (err) {
       console.error(err);
       alert("Save failed.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
   const handleChange = (path: string, value: any) => {
+    setIsLoading(true);
     const keys = path.split(".");
     const newData = { ...data } as any;
     let temp = newData;
@@ -122,6 +127,7 @@ const EditServicePage = () => {
     }
     temp[keys[keys.length - 1]] = value;
     setData(newData);
+    setIsLoading(false);
   };
   const handleDynamicImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -130,13 +136,13 @@ const EditServicePage = () => {
   ): Promise<void> => {
     const file = e.target.files?.[0];
     if (!file || !selectedName) return;
-
     const formData = new FormData();
     formData.append("image", file);
     formData.append("imageKey", imageKey);
     formData.append("name", selectedName);
 
     try {
+      setIsLoading(true);
       const res = await fetch(`${baseURL}/upload-service-image`, {
         method: "POST",
         body: formData,
@@ -146,7 +152,7 @@ const EditServicePage = () => {
         await res.json();
 
       if (res.ok && result.path) {
-        alert(`Image uploaded: ${result.path}`);
+        setIsLoading(false);
         // ✅ Reflect the image update instantly in UI
         handleChange(imageKey, result.path);
       } else {
@@ -154,10 +160,17 @@ const EditServicePage = () => {
       }
     } catch (error) {
       console.error("Upload failed:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  if (loading) return <div>Loading...</div>;
+  if (loading)
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
   if (error) return <div>{error}</div>;
 
   return (
@@ -169,6 +182,8 @@ const EditServicePage = () => {
             : "md:w-[80%] lg:w-[82%] xl:w-[85%] 2xl:w-[87%]"
         } duration-500 font-semibold ml-auto py-[20px] px-[30px] mt-[40px] p-6 space-y-6 `}
       >
+        {isLoading && <Loader />}
+
         <div className="relative">
           <h1 className="color text-[32px] font-semibold mt-[20px]">
             Hero Section

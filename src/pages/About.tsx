@@ -3,7 +3,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 import { baseURL } from "../../API/baseURL";
-
+import Loader from "../components/Loader";
 
 interface AboutCard {
   title: string;
@@ -26,6 +26,7 @@ interface AboutData {
 }
 
 const EditAboutData: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<AboutData | null>(null);
   const toggle = useSelector((state: RootState) => state.toggle.value);
   const [metadataText, setMetadataText] = useState("");
@@ -37,12 +38,14 @@ const EditAboutData: React.FC = () => {
       setData(res.data);
       setMetadataText(JSON.stringify(res.data.metadata || {}, null, 2));
       setScriptText(JSON.stringify(res.data.script || {}, null, 2));
+      setIsLoading(false);
     };
     fetchData();
   }, []);
 
   const handleSave = async () => {
     try {
+      setIsLoading(true);
       const parsedMetadata = JSON.parse(metadataText);
       const parsedScript = JSON.parse(scriptText);
 
@@ -53,12 +56,14 @@ const EditAboutData: React.FC = () => {
       };
 
       await axios.put(`${baseURL}/aboutdata`, updatedData);
-      alert("About data updated successfully");
+      setIsLoading(false);
     } catch (err) {
       console.error(err);
       alert(
         "Error updating about data. Make sure metadata and script are valid JSON."
       );
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -66,6 +71,7 @@ const EditAboutData: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement>,
     imageKey: keyof AboutData
   ) => {
+    setIsLoading(true);
     const file = e.target.files?.[0];
     if (!file) return;
 
@@ -74,22 +80,21 @@ const EditAboutData: React.FC = () => {
     formData.append("imageKey", imageKey); // send which image to update
 
     try {
-      const res = await axios.post(
-        `${baseURL}/upload-about-image`,
-        formData
-      );
+      const res = await axios.post(`${baseURL}/upload-about-image`, formData);
       const imagePath = res.data.path;
 
       // Update that specific image key
       if (data) setData({ ...data, [imageKey]: imagePath });
-      alert(`${imageKey} updated successfully`);
+      setIsLoading(false);
     } catch (error) {
       console.error(error);
       alert(`Failed to update ${imageKey}`);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  if (!data) return <div>Loading...</div>;
+  if (!data) return <div><Loader/></div>;
 
   return (
     <>
@@ -100,6 +105,7 @@ const EditAboutData: React.FC = () => {
             : "md:w-[80%] lg:w-[82%] xl:w-[85%] 2xl:w-[87%]"
         } duration-500 font-semibold ml-auto py-[20px] px-[30px] mt-[40px] p-6 space-y-6`}
       >
+        {isLoading && <Loader />}
         <h1 className="color text-[32px] font-semibold my-[10px]">
           Edit About Page
         </h1>

@@ -3,6 +3,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 import { baseURL } from "../../API/baseURL";
+import Loader from "../components/Loader";
 
 export interface BlogItem {
   id: number;
@@ -23,12 +24,14 @@ export interface BlogPageData {
 const EditBlogPage: React.FC = () => {
   const toggle = useSelector((state: RootState) => state.toggle.value);
   const [data, setData] = useState<BlogPageData | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchBlogData = async () => {
       try {
         const response = await axios.get(`${baseURL}/blogdata`);
         setData(response.data);
+        setIsLoading(false);
       } catch (error) {
         console.error("Failed to fetch blog data:", error);
       }
@@ -38,14 +41,17 @@ const EditBlogPage: React.FC = () => {
   }, []);
   const handleSave = async () => {
     try {
+      setIsLoading(true);
       const updatedData = {
         ...data,
       };
       await axios.put(`${baseURL}/blogdata`, updatedData);
-      alert("Blog data updated successfully");
+      setIsLoading(false);
     } catch (err) {
       console.error(err);
       alert("Error updating Blog data");
+    }finally{
+      setIsLoading(false);
     }
   };
 
@@ -61,10 +67,7 @@ const EditBlogPage: React.FC = () => {
     formData.append("imageKey", imageKey); // e.g., 'logos[0].src'
 
     try {
-      const res = await axios.post(
-        `${baseURL}/upload-blog-image`,
-        formData
-      );
+      const res = await axios.post(`${baseURL}/upload-blog-image`, formData);
       const imagePath = res.data.path;
 
       // ✅ Update local state (data)
@@ -103,6 +106,7 @@ const EditBlogPage: React.FC = () => {
           : "md:w-[80%] lg:w-[82%] xl:w-[85%] 2xl:w-[87%]"
       } duration-500 font-semibold ml-auto py-[20px] px-[30px] mt-[40px] space-y-6`}
     >
+      {isLoading && <Loader />}
       <img
         src={`${baseURL}/images/blogs/${data.heroimg}`}
         className="mt-[20px] w-full h-[250px] object-cover"
@@ -117,7 +121,7 @@ const EditBlogPage: React.FC = () => {
       <div>
         <div>
           <h2 className="text-[18px] font-semibold mt-[10px]">Title:</h2>
-          <input
+          <input 
             className="block w-full my-2 p-2 border"
             value={data?.title}
             onChange={(e) => setData({ ...data, title: e.target.value })}

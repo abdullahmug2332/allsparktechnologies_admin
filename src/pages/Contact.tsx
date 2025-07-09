@@ -3,6 +3,7 @@ import axios from "axios";
 import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 import { baseURL } from "../../API/baseURL";
+import Loader from "../components/Loader";
 
 interface ContactMethod {
   label: string;
@@ -21,6 +22,7 @@ interface ContactData {
 }
 
 const EditContactData: React.FC = () => {
+  const [isLoading, setIsLoading] = useState(true);
   const [data, setData] = useState<ContactData | null>(null);
   const toggle = useSelector((state: RootState) => state.toggle.value);
   const [metadataText, setMetadataText] = useState("");
@@ -32,12 +34,14 @@ const EditContactData: React.FC = () => {
       setData(res.data);
       setMetadataText(JSON.stringify(res.data.metadata || {}, null, 2));
       setScriptText(JSON.stringify(res.data.script || {}, null, 2));
+      setIsLoading(false);
     };
     fetchData();
   }, []);
 
   const handleSave = async () => {
     try {
+      setIsLoading(true);
       const parsedMetadata = JSON.parse(metadataText);
       const parsedScript = JSON.parse(scriptText);
       const updatedData = {
@@ -46,37 +50,42 @@ const EditContactData: React.FC = () => {
         script: parsedScript,
       };
       await axios.put(`${baseURL}/contactdata`, updatedData);
-      alert("Contact data updated successfully");
+      setIsLoading(false);
     } catch (err) {
       console.error(err);
       alert(
         "Error updating contact data. Make sure metadata and script are valid JSON."
       );
+    } finally {
+      setIsLoading(false);
     }
   };
 
   // multer here
-const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0];
-  if (!file) return;
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setIsLoading(true);
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-  const formData = new FormData();
-  formData.append("image", file);
+    const formData = new FormData();
+    formData.append("image", file);
 
-  try {
-    const res = await axios.post(`${baseURL}/upload-contact-image`, formData);
-    const imagePath = res.data.path;
+    try {
+      const res = await axios.post(`${baseURL}/upload-contact-image`, formData);
+      const imagePath = res.data.path;
 
-    // Update state with new image path
-    if (data) setData({ ...data, heroimg: imagePath });
-    alert("Image uploaded and path updated in DB");
-  } catch (error) {
-    console.error(error);
-    alert("Failed to upload image");
+      // Update state with new image path
+      if (data) setData({ ...data, heroimg: imagePath });
+      setIsLoading(false);
+    } catch (error) {
+      console.error(error);
+      alert("Failed to upload image");
+    }finally{
+      setIsLoading(false)
   }
-};
+  };
 
-  if (!data) return <div>Loading...</div>;
+  if (!data) return <div><Loader/></div>;
 
   return (
     <>
@@ -87,13 +96,18 @@ const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
             : "md:w-[80%] lg:w-[82%] xl:w-[85%] 2xl:w-[87%]"
         } duration-500 font-semibold ml-auto py-[20px] px-[30px] mt-[40px] p-6 space-y-6`}
       >
+        {isLoading && <Loader />}
+
         <h1 className="color text-[32px] font-semibold my-[20px]">
           Edit Contact Page
         </h1>
 
         {/* Hero Image */}
         <div className="flex gap-1 flex-col">
-        <img src={`${baseURL}/images/contact/${data.heroimg}`} className="max-h-[300px] object-cover"/>
+          <img
+            src={`${baseURL}/images/contact/${data.heroimg}`}
+            className="max-h-[300px] object-cover"
+          />
           <input type="file" onChange={handleImageChange} />
         </div>
 
