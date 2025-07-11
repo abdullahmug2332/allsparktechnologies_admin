@@ -6,7 +6,6 @@ import { IoHome } from "react-icons/io5";
 import { MdContactPhone } from "react-icons/md";
 import { FaInfoCircle } from "react-icons/fa";
 import { RiComputerLine } from "react-icons/ri";
-import { AiTwotoneIdcard } from "react-icons/ai";
 import logo from "../assets/footer-logo.svg"; 
 import { CgToday } from "react-icons/cg";
 

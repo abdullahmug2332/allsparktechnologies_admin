@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import { Navigate, useNavigate } from "react-router-dom";
+import {  useNavigate } from "react-router-dom";
 
 // Formats outside the component
 const formats = [
