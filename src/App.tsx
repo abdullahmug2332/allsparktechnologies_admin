@@ -9,6 +9,7 @@ import PrivateRoute from "./components/ProtectedRoute";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import Blog from "./pages/Blog";
+import CreateBlogs from "./pages/CreateBlogs";
 import EditBlogs from "./pages/EditBlogs";
 
 const App: React.FC = () => {
@@ -23,7 +24,8 @@ const App: React.FC = () => {
           <Route path="/contact" element={<Contact />} />
           <Route path="/services" element={<Services />} />
           <Route path="/blog" element={<Blog />} />
-          <Route path="/editblog" element={<EditBlogs />} />
+          <Route path="/createblog" element={<CreateBlogs />} />
+          <Route path="/editblog/:urlName" element={<EditBlogs />} />
         </Route>
       </Routes>
       <Sidebar />

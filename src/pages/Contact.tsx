@@ -99,7 +99,7 @@ const EditContactData: React.FC = () => {
         {isLoading && <Loader />}
 
         <h1 className="color text-[32px] font-semibold my-[20px]">
-          Edit Contact Page
+         Contact Page
         </h1>
 
         {/* Hero Image */}

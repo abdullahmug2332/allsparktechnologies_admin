@@ -7,8 +7,8 @@ import { MdContactPhone } from "react-icons/md";
 import { FaInfoCircle } from "react-icons/fa";
 import { RiComputerLine } from "react-icons/ri";
 import { AiTwotoneIdcard } from "react-icons/ai";
-import logo from "../assets/footer-logo.svg"; // Update the path to your logo imag
-import { MdOutlinePlaylistAdd } from "react-icons/md";
+import logo from "../assets/footer-logo.svg"; 
+import { CgToday } from "react-icons/cg";
 
 const Sidebar: React.FC = () => {
   const location = useLocation();
@@ -61,15 +61,8 @@ const Sidebar: React.FC = () => {
           to="/blog"
           className="flex items-center gap-[10px] hover:scale-[1.06] duration-300 cursor-pointer"
         >
-          <AiTwotoneIdcard className="text-[25px] text-white" />
+          <CgToday className="text-[20px] text-white" />
           <div className="text-white text-[16px] font-semibold">Blogs</div>
-        </Link>
-        <Link
-          to="/editblog"
-          className="flex items-center gap-[10px] hover:scale-[1.06] duration-300 cursor-pointer"
-        >
-          <MdOutlinePlaylistAdd  className="text-[25px] text-white" />
-          <div className="text-white text-[16px] font-semibold">Add Blog</div>
         </Link>
       </div>
     </section>

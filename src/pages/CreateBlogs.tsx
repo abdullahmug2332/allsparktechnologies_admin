@@ -1,12 +1,11 @@
-import React, { useEffect, useRef, useState, useMemo, use } from "react";
+import React, { useRef, useState, useMemo, useEffect } from "react";
 import { useSelector } from "react-redux";
-import { useParams, useNavigate } from "react-router-dom";
+import type { RootState } from "../redux/store";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import type { RootState } from "../redux/store";
-import { baseURL } from "../../API/baseURL";
-import Loader from "../components/Loader";
+import { Navigate, useNavigate } from "react-router-dom";
 
+// Formats outside the component
 const formats = [
   "header",
   "bold",
@@ -23,6 +22,7 @@ const formats = [
   "align",
 ];
 
+// Toolbar modules creator
 const createModules = (imageHandler: () => void) => ({
   toolbar: {
     container: [
@@ -40,50 +40,22 @@ const createModules = (imageHandler: () => void) => ({
   },
 });
 
-const EditBlogEditor = () => {
+const BlogEditor = () => {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
   const toggle = useSelector((state: RootState) => state.toggle.value);
-  const [isLoading, setIsLoading] = useState(true);
-  const { urlName } = useParams();
   const navigate = useNavigate();
-  const [slug, setSlug] = useState("");
-
-  const [blogId, setBlogId] = useState<number | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
-  const [content, setContent] = useState("");
+  const [urlName, setUrlName] = useState("");
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
+  const [content, setContent] = useState<string>("");
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
 
   const quillRef = useRef<any>(null);
-
-  // Fetch the blog by slug/urlName
-  useEffect(() => {
-    const fetchBlog = async () => {
-      try {
-        setIsLoading(true);
-        const res = await fetch(`${baseURL}/blogs/${urlName}`);
-        const data = await res.json();
-        setSlug(data.urlName);
-        setBlogId(data.id);
-        setTitle(data.title);
-        setDescription(data.description);
-        setContent(data.content);
-        setMetaTitle(data.metatitle );
-        setMetaDescription(data.metadescription );
-        setImagePreview(`${baseURL}/images/blogs/${data.image}`);
-        setIsLoading(false);
-      } catch (err) {
-        console.error("Failed to fetch blog:", err);
-      }
-    };
-
-    if (urlName) fetchBlog();
-  }, [urlName]);
 
   const imageHandler = () => {
     const input = document.createElement("input");
@@ -98,7 +70,7 @@ const EditBlogEditor = () => {
         formData.append("image", file);
 
         try {
-          const res = await fetch(`${baseURL}/blogs/upload-image`, {
+          const res = await fetch("http://localhost:5000/blogs/upload-image", {
             method: "POST",
             body: formData,
           });
@@ -108,7 +80,7 @@ const EditBlogEditor = () => {
           quill?.insertEmbed(
             range?.index || 0,
             "image",
-            `${baseURL}/images/blogs/${data.filename}`
+            `http://localhost:5000/images/blogs/${data.filename}`
           );
         } catch (err) {
           console.error("Image upload failed:", err);
@@ -128,45 +100,42 @@ const EditBlogEditor = () => {
     }
   };
 
-  const handleUpdate = async () => {
+  const handleSave = async () => {
     if (!title || !description || !urlName || !content) {
       alert("Please fill in all fields.");
       return;
     }
-    setIsLoading(true);
+
     const formData = new FormData();
-    formData.append("id", String(blogId));
     formData.append("title", title);
     formData.append("description", description);
-    formData.append("urlName", slug);
+    formData.append("urlName", urlName);
     formData.append("content", content);
     formData.append("metaTitle", metaTitle);
     formData.append("metaDescription", metaDescription);
-
-    if (imageFile) {
-      formData.append("image", imageFile);
-    } else {
-      formData.append("image", imagePreview.split("/").pop() || "");
-    }
+    if (imageFile) formData.append("image", imageFile);
 
     try {
-      const res = await fetch(`${baseURL}/blog/${blogId}`, {
-        method: "PUT",
+      const response = await fetch("http://localhost:5000/blogs", {
+        method: "POST",
         body: formData,
       });
 
-      const result = await res.json();
+      const result = await response.json();
 
-      if (res.ok) {
+      if (response.ok) {
+        setTitle("");
+        setDescription("");
+        setUrlName("");
+        setImageFile(null);
+        setImagePreview("");
+        setContent("");
         navigate("/blog");
       } else {
-        alert("❌ Update failed: " + result.error);
+        alert("❌ Blog creation failed: " + result.error);
       }
-      setIsLoading(false);
-    } catch (err) {
-      setIsLoading(false);
-
-      alert("❌ Something went wrong.");
+    } catch (error) {
+      alert("❌ Something went wrong. Please try again.");
     }
   };
 
@@ -178,8 +147,7 @@ const EditBlogEditor = () => {
           : "md:w-[80%] lg:w-[82%] xl:w-[85%] 2xl:w-[87%]"
       } duration-500 font-semibold ml-auto py-[20px] px-[30px] mt-[40px] space-y-1`}
     >
-      <h1 className="color text-[32px] font-semibold my-[20px]">Edit Blog</h1>
-      {isLoading && <Loader />}
+      <h1 className="color text-[32px] font-semibold my-[20px]">Create Blog</h1>
 
       {imagePreview && (
         <img
@@ -214,8 +182,8 @@ const EditBlogEditor = () => {
         <input
           type="text"
           className="border w-full p-2 rounded"
-          value={slug}
-          onChange={(e) => setSlug(e.target.value)}
+          value={urlName}
+          onChange={(e) => setUrlName(e.target.value)}
         />
       </div>
       <div>
@@ -253,13 +221,13 @@ const EditBlogEditor = () => {
       </div>
 
       <button
-        onClick={handleUpdate}
+        onClick={handleSave}
         className="bg text-white px-4 py-2 rounded mt-[10px] relative top-[70px]"
       >
-        Update Blog
+        Submit Blog
       </button>
     </div>
   );
 };
 
-export default EditBlogEditor;
+export default BlogEditor;

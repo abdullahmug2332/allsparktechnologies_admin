@@ -107,7 +107,7 @@ const EditAboutData: React.FC = () => {
       >
         {isLoading && <Loader />}
         <h1 className="color text-[32px] font-semibold my-[10px]">
-          Edit About Page
+          About Page
         </h1>
 
         {/* Hero Image */}
