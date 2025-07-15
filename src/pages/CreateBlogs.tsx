@@ -123,7 +123,7 @@ const BlogEditor = () => {
       });
 
       const result = await response.json();
-
+      alert("Blog created Successfully ! " );
       if (response.ok) {
         setTitle("");
         setDescription("");

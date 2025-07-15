@@ -73,8 +73,8 @@ const EditBlogEditor = () => {
         setTitle(data.title);
         setDescription(data.description);
         setContent(data.content);
-        setMetaTitle(data.metatitle );
-        setMetaDescription(data.metadescription );
+        setMetaTitle(data.metatitle);
+        setMetaDescription(data.metadescription);
         setImagePreview(`${baseURL}/images/blogs/${data.image}`);
         setIsLoading(false);
       } catch (err) {
@@ -156,6 +156,7 @@ const EditBlogEditor = () => {
       });
 
       const result = await res.json();
+      alert("Update Blog successfully !" );
 
       if (res.ok) {
         navigate("/blog");
