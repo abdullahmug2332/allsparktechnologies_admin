@@ -109,6 +109,7 @@ const EditServicePage = () => {
         json: data,
       });
       setIsLoading(false);
+      alert("Data updated successfully!");
     } catch (err) {
       console.error(err);
       alert("Save failed.");

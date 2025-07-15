@@ -50,6 +50,8 @@ const EditContactData: React.FC = () => {
         script: parsedScript,
       };
       await axios.put(`${baseURL}/contactdata`, updatedData);
+      alert("Contact Page updated successfully!");
+
       setIsLoading(false);
     } catch (err) {
       console.error(err);
@@ -80,12 +82,17 @@ const EditContactData: React.FC = () => {
     } catch (error) {
       console.error(error);
       alert("Failed to upload image");
-    }finally{
-      setIsLoading(false)
-  }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  if (!data) return <div><Loader/></div>;
+  if (!data)
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
 
   return (
     <>
@@ -99,7 +106,7 @@ const EditContactData: React.FC = () => {
         {isLoading && <Loader />}
 
         <h1 className="color text-[32px] font-semibold my-[20px]">
-         Contact Page
+          Contact Page
         </h1>
 
         {/* Hero Image */}

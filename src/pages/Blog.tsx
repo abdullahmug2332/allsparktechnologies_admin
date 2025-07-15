@@ -87,6 +87,7 @@ const EditBlogPage: React.FC = () => {
       };
       await axios.put(`${baseURL}/blogdata`, updatedData);
       setIsLoading(false);
+      alert("Blog Page updated successfully!");
     } catch (err) {
       console.error(err);
       alert("Error updating Blog data");

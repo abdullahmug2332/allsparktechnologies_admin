@@ -56,6 +56,7 @@ const EditAboutData: React.FC = () => {
       };
 
       await axios.put(`${baseURL}/aboutdata`, updatedData);
+    alert("About data updated successfully!");
       setIsLoading(false);
     } catch (err) {
       console.error(err);

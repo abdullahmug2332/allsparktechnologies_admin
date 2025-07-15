@@ -123,6 +123,8 @@ const EditHomeData: React.FC = () => {
         script: parsedScript,
       };
       await axios.put(`${baseURL}/homedata`, updatedData);
+    alert("Home Page updated successfully!");
+
       setIsLoading(false);
     } catch (err) {
       console.error(err);
