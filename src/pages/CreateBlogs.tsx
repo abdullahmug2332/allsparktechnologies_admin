@@ -4,6 +4,7 @@ import type { RootState } from "../redux/store";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import {  useNavigate } from "react-router-dom";
+import { baseURL } from "../../API/baseURL";
 
 // Formats outside the component
 const formats = [
@@ -70,7 +71,7 @@ const BlogEditor = () => {
         formData.append("image", file);
 
         try {
-          const res = await fetch("http://localhost:5000/blogs/upload-image", {
+          const res = await fetch(`${baseURL}/blogs/upload-image`, {
             method: "POST",
             body: formData,
           });
@@ -80,7 +81,7 @@ const BlogEditor = () => {
           quill?.insertEmbed(
             range?.index || 0,
             "image",
-            `http://localhost:5000/images/blogs/${data.filename}`
+            `${baseURL}/images/blogs/${data.filename}`
           );
         } catch (err) {
           console.error("Image upload failed:", err);
@@ -116,7 +117,7 @@ const BlogEditor = () => {
     if (imageFile) formData.append("image", imageFile);
 
     try {
-      const response = await fetch("http://localhost:5000/blogs", {
+      const response = await fetch(`${baseURL}/blogs`, {
         method: "POST",
         body: formData,
       });
