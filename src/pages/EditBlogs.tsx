@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState, useMemo } from "react";
 import { useSelector } from "react-redux";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import type { RootState } from "../redux/store";
@@ -47,7 +47,6 @@ const EditBlogEditor = () => {
   const toggle = useSelector((state: RootState) => state.toggle.value);
   const [isLoading, setIsLoading] = useState(true);
   const { urlName } = useParams();
-  const navigate = useNavigate();
   const [slug, setSlug] = useState("");
 
   const [blogId, setBlogId] = useState<number | null>(null);
