@@ -35,6 +35,10 @@ interface AboutData {
   img1: string;
   img2: string;
   img3: string;
+  alt1: string;
+  alt2: string;
+  alt3: string;
+  alt4: string;
   subheading: string;
   mainHeading: string;
   paragraphs: string[];
@@ -56,12 +60,16 @@ interface FAQData {
   img1: string;
   img2: string;
   img3: string;
+  alt1: string;
+  alt2: string;
+  alt3: string;
   subtitle: string;
   title: string;
   faqs: FAQItem[];
 }
 interface ContactBanner {
   img: string;
+  alt: string;
   subTitle: string;
   title: string;
 }
@@ -123,7 +131,7 @@ const EditHomeData: React.FC = () => {
         script: parsedScript,
       };
       await axios.put(`${baseURL}/homedata`, updatedData);
-    alert("Home Page updated successfully!");
+      alert("Home Page updated successfully!");
 
       setIsLoading(false);
     } catch (err) {
@@ -195,9 +203,10 @@ const EditHomeData: React.FC = () => {
         <h1 className="color text-[32px] font-semibold my-[10px]">
           Hero Section
         </h1>
-        {/* Hero Section */}
+
         <div className="space-y-8">
           <div>
+            {/* Hero Section */}
             <section>
               <h2 className="color text-[18px] font-semibold">
                 Hero Headings:
@@ -275,9 +284,28 @@ const EditHomeData: React.FC = () => {
                         handleDynamicImageUpload(e, `logos[${index}].src`)
                       }
                     />
+                    <input
+                      type="text"
+                      value={logo.alt}
+                      placeholder="Alt Text"
+                      onChange={(e) => {
+                        const updatedLogos = [...data.logos];
+                        updatedLogos[index] = {
+                          ...updatedLogos[index],
+                          alt: e.target.value,
+                        };
+                        setData({ ...data, logos: updatedLogos });
+                      }}
+                    />
                   </div>
                 ))}
               </div>
+              <button
+                className="bg text-white px-4 py-2 rounded mt-4"
+                onClick={handleSave}
+              >
+                Save Changes
+              </button>
             </section>
           </div>
 
@@ -477,7 +505,9 @@ const EditHomeData: React.FC = () => {
             >
               Save Changes
             </button>
+            {/* Images  */}
             <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-[10px] mt-[30px]">
+              {/* Image1 */}
               <div className="flex flex-col gap-[5px] ">
                 <img
                   src={`${baseURL}/images/home/${data?.about?.img1}`}
@@ -487,6 +517,18 @@ const EditHomeData: React.FC = () => {
                   type="file"
                   onChange={(e) => handleDynamicImageUpload(e, "about.img1")}
                 />
+                <input
+                  type="text"
+                  placeholder="Alt Text"
+                  value={data?.about?.alt1}
+                  onChange={(e) => {
+                    const updatedAbout = {
+                      ...data.about,
+                      alt1: e.target.value,
+                    };
+                    setData({ ...data, about: updatedAbout });
+                  }}
+                />
                 <button
                   className="bg text-white px-4 py-2 rounded mt-1"
                   onClick={handleSave}
@@ -494,6 +536,8 @@ const EditHomeData: React.FC = () => {
                   Save Changes
                 </button>
               </div>
+
+              {/* Image2 */}
               <div className="flex flex-col gap-[5px] ">
                 <img
                   src={`${baseURL}/images/home/${data?.about?.img2} `}
@@ -503,6 +547,18 @@ const EditHomeData: React.FC = () => {
                   type="file"
                   onChange={(e) => handleDynamicImageUpload(e, "about.img2")}
                 />
+                <input
+                  type="text"
+                  placeholder="Alt Text"
+                  value={data?.about?.alt2}
+                  onChange={(e) => {
+                    const updatedAbout = {
+                      ...data.about,
+                      alt2: e.target.value,
+                    };
+                    setData({ ...data, about: updatedAbout });
+                  }}
+                />
                 <button
                   className="bg text-white px-4 py-2 rounded mt-1"
                   onClick={handleSave}
@@ -510,6 +566,8 @@ const EditHomeData: React.FC = () => {
                   Save Changes
                 </button>
               </div>
+
+              {/* Image3 */}
               <div className="flex flex-col gap-[5px] ">
                 <img
                   src={`${baseURL}/images/home/${data?.about?.img3}`}
@@ -518,6 +576,18 @@ const EditHomeData: React.FC = () => {
                 <input
                   type="file"
                   onChange={(e) => handleDynamicImageUpload(e, "about.img3")}
+                />
+                <input
+                  type="text"
+                  placeholder="Alt Text"
+                  value={data?.about?.alt3}
+                  onChange={(e) => {
+                    const updatedAbout = {
+                      ...data.about,
+                      alt3: e.target.value,
+                    };
+                    setData({ ...data, about: updatedAbout });
+                  }}
                 />
                 <button
                   className="bg text-white px-4 py-2 rounded mt-1"
@@ -637,7 +707,10 @@ const EditHomeData: React.FC = () => {
             >
               Save Changes
             </button>
+
+            {/* Images */}
             <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-[10px] mt-[30px]">
+              {/* Img1  */}
               <div className="flex flex-col gap-[5px] ">
                 <img
                   src={`${baseURL}/images/home/${data?.faq?.img1}`}
@@ -647,6 +720,17 @@ const EditHomeData: React.FC = () => {
                   type="file"
                   onChange={(e) => handleDynamicImageUpload(e, "faq.img1")}
                 />
+                <input
+                  type="text"
+                  placeholder="Alt Text"
+                  value={data?.faq?.alt1}
+                  onChange={(e) => {
+                    setData({
+                      ...data,
+                      faq: { ...data.faq, alt1: e.target.value },
+                    });
+                  }}
+                />
                 <button
                   className="bg text-white px-4 py-2 rounded mt-1"
                   onClick={handleSave}
@@ -654,6 +738,8 @@ const EditHomeData: React.FC = () => {
                   Save Changes
                 </button>
               </div>
+
+              {/* Img2  */}
               <div className="flex flex-col gap-[5px] ">
                 <img
                   src={`${baseURL}/images/home/${data?.faq?.img2} `}
@@ -663,6 +749,17 @@ const EditHomeData: React.FC = () => {
                   type="file"
                   onChange={(e) => handleDynamicImageUpload(e, "faq.img2")}
                 />
+                <input
+                  type="text"
+                  placeholder="Alt Text"
+                  value={data?.faq?.alt2}
+                  onChange={(e) => {
+                    setData({
+                      ...data,
+                      faq: { ...data.faq, alt2: e.target.value },
+                    });
+                  }}
+                />
                 <button
                   className="bg text-white px-4 py-2 rounded mt-1"
                   onClick={handleSave}
@@ -670,6 +767,8 @@ const EditHomeData: React.FC = () => {
                   Save Changes
                 </button>
               </div>
+
+              {/* Img3  */}
               <div className="flex flex-col gap-[5px] ">
                 <img
                   src={`${baseURL}/images/home/${data?.faq?.img3}`}
@@ -678,6 +777,17 @@ const EditHomeData: React.FC = () => {
                 <input
                   type="file"
                   onChange={(e) => handleDynamicImageUpload(e, "faq.img3")}
+                />
+                <input
+                  type="text"
+                  placeholder="Alt Text"
+                  value={data?.faq?.alt3}
+                  onChange={(e) => {
+                    setData({
+                      ...data,
+                      faq: { ...data.faq, alt3: e.target.value },
+                    });
+                  }}
                 />
                 <button
                   className="bg text-white px-4 py-2 rounded mt-1"
@@ -757,6 +867,18 @@ const EditHomeData: React.FC = () => {
                   onChange={(e) =>
                     handleDynamicImageUpload(e, "contactBanner.img")
                   }
+                />
+                <input
+                  type="text"
+                  placeholder="Alt Text"
+                  value={data.contactBanner.alt}
+                  onChange={(e)=>{setData({
+                    ...data,
+                    contactBanner: {
+                      ...data.contactBanner,
+                      alt: e.target.value,
+                    },
+                  })}}
                 />
               </div>
               <button

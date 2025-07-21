@@ -16,6 +16,10 @@ interface AboutData {
   img2: string;
   img3: string;
   img4: string;
+  alt1: string;
+  alt2: string;
+  alt3: string;
+  alt4: string;
   subheading: string;
   mainHeading: string;
   split: string;
@@ -56,7 +60,7 @@ const EditAboutData: React.FC = () => {
       };
 
       await axios.put(`${baseURL}/aboutdata`, updatedData);
-    alert("About data updated successfully!");
+      alert("About data updated successfully!");
       setIsLoading(false);
     } catch (err) {
       console.error(err);
@@ -95,7 +99,12 @@ const EditAboutData: React.FC = () => {
     }
   };
 
-  if (!data) return <div><Loader/></div>;
+  if (!data)
+    return (
+      <div>
+        <Loader />
+      </div>
+    );
 
   return (
     <>
@@ -159,6 +168,7 @@ const EditAboutData: React.FC = () => {
 
           {/* Images */}
           <div className="flex gap-4">
+            {/* Image1  */}
             <div className="flex gap-1 flex-col">
               <h1 className="color text-[22px] font-semibold my-[0px]">
                 Image 1:
@@ -171,8 +181,15 @@ const EditAboutData: React.FC = () => {
                 type="file"
                 onChange={(e) => handleDynamicImageUpload(e, "img1")}
               />
+              <input
+                type="text"
+                value={data.alt1}
+                placeholder="Alt Text"
+                onChange={(e) => setData({ ...data, alt1: e.target.value })}
+              />
             </div>
 
+            {/* Image2  */}
             <div className="flex gap-1 flex-col">
               <h1 className="color text-[22px] font-semibold my-[0px]">
                 Image 2:
@@ -185,8 +202,15 @@ const EditAboutData: React.FC = () => {
                 type="file"
                 onChange={(e) => handleDynamicImageUpload(e, "img2")}
               />
+              <input
+                type="text"
+                value={data.alt2}
+                placeholder="Alt Text"
+                onChange={(e) => setData({ ...data, alt2: e.target.value })}
+              />
             </div>
 
+            {/* Image3  */}
             <div className="flex gap-1 flex-col">
               <h1 className="color text-[22px] font-semibold my-[0px]">
                 Image 3:
@@ -198,6 +222,12 @@ const EditAboutData: React.FC = () => {
               <input
                 type="file"
                 onChange={(e) => handleDynamicImageUpload(e, "img3")}
+              />
+              <input
+                type="text"
+                value={data.alt3}
+                placeholder="Alt Text"
+                onChange={(e) => setData({ ...data, alt3: e.target.value })}
               />
             </div>
           </div>
