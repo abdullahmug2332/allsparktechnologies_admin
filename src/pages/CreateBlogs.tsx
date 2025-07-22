@@ -3,8 +3,9 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
-import {  useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { baseURL } from "../../API/baseURL";
+import Loader from "../components/Loader";
 
 // Formats outside the component
 const formats = [
@@ -55,6 +56,7 @@ const BlogEditor = () => {
   const [content, setContent] = useState<string>("");
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   const quillRef = useRef<any>(null);
 
@@ -106,7 +108,7 @@ const BlogEditor = () => {
       alert("Please fill in all fields.");
       return;
     }
-
+    setIsLoading(true);
     const formData = new FormData();
     formData.append("title", title);
     formData.append("description", description);
@@ -123,7 +125,8 @@ const BlogEditor = () => {
       });
 
       const result = await response.json();
-      alert("Blog created Successfully ! " );
+      setIsLoading(false);
+      alert("Blog created Successfully ! ");
       if (response.ok) {
         setTitle("");
         setDescription("");
@@ -136,6 +139,7 @@ const BlogEditor = () => {
         alert("❌ Blog creation failed: " + result.error);
       }
     } catch (error) {
+      setIsLoading(false);
       alert("❌ Something went wrong. Please try again.");
     }
   };
@@ -148,6 +152,7 @@ const BlogEditor = () => {
           : "md:w-[80%] lg:w-[82%] xl:w-[85%] 2xl:w-[87%]"
       } duration-500 font-semibold ml-auto py-[20px] px-[30px] mt-[40px] space-y-1`}
     >
+      {isLoading && <Loader />}
       <h1 className="color text-[32px] font-semibold my-[20px]">Create Blog</h1>
 
       {imagePreview && (

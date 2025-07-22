@@ -155,7 +155,6 @@ const EditBlogEditor = () => {
       });
 
       const result = await res.json();
-
       if (res.ok) {
         alert("Update Blog successfully !");
       } else {
