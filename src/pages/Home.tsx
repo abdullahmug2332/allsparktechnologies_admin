@@ -933,6 +933,23 @@ const EditHomeData: React.FC = () => {
                       });
                     }}
                   />
+                  <input
+                  type="number"
+                    className="block w-[50%] p-2 border "
+                    value={t.rating}
+                    placeholder="Rating"
+                    onChange={(e) => {
+                      const updated = [...data.testimonials.testimonials];
+                       updated[i].rating = Number(e.target.value);
+                      setData({
+                        ...data,
+                        testimonials: {
+                          ...data.testimonials,
+                          testimonials: updated,
+                        },
+                      });
+                    }}
+                  />
                 </div>
 
                 <textarea
