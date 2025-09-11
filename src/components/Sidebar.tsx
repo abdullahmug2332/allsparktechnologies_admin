@@ -8,7 +8,7 @@ import { FaInfoCircle } from "react-icons/fa";
 import { RiComputerLine } from "react-icons/ri";
 import logo from "../assets/footer-logo.svg"; 
 import { CgToday } from "react-icons/cg";
-
+import { TiMessages } from "react-icons/ti";
 const Sidebar: React.FC = () => {
   const location = useLocation();
   const isAuthPage: Boolean = location.pathname === "/auth";
@@ -62,6 +62,13 @@ const Sidebar: React.FC = () => {
         >
           <CgToday className="text-[20px] text-white" />
           <div className="text-white text-[16px] font-semibold">Blogs</div>
+        </Link>
+        <Link
+          to="/messages"
+          className="flex items-center gap-[10px] hover:scale-[1.06] duration-300 cursor-pointer"
+        >
+          <TiMessages className="text-[20px] text-white" />
+          <div className="text-white text-[16px] font-semibold">Messages</div>
         </Link>
       </div>
     </section>

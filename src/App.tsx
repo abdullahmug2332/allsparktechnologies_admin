@@ -11,6 +11,8 @@ import Sidebar from "./components/Sidebar";
 import Blog from "./pages/Blog";
 import CreateBlogs from "./pages/CreateBlogs";
 import EditBlogs from "./pages/EditBlogs";
+import AllMessages from "./pages/AllMessages";
+import MessagesDetail from "./pages/MessageDetail";
 
 const App: React.FC = () => {
   return (
@@ -26,6 +28,8 @@ const App: React.FC = () => {
           <Route path="/blog" element={<Blog />} />
           <Route path="/createblog" element={<CreateBlogs />} />
           <Route path="/editblog/:urlName" element={<EditBlogs />} />
+          <Route path="/messages" element={<AllMessages />} />
+          <Route path="/message/:id" element={<MessagesDetail />} />
         </Route>
       </Routes>
       <Sidebar />

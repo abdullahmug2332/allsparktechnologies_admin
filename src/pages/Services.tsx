@@ -16,11 +16,11 @@ interface ServiceHeroData {
 }
 
 interface ServiceLogosData {
-  logos: any[];
+  logos: string[];
 }
 
 interface ServiceCardItem {
-  icon: any;
+  icon: string;
   number: number | string;
   text: string;
   symbol?: string;
@@ -32,15 +32,15 @@ interface ServiceCardData {
 }
 
 interface ServiceAboutFeature {
-  icon: any;
+  icon: string;
   title: string;
 }
 
 
 interface ServiceAboutData {
-  image1: any;
-  image2: any;
-  image3: any;
+  image1: string;
+  image2: string;
+  image3: string;
   subTitle: string;
   title: string;
   des: string;
@@ -48,10 +48,10 @@ interface ServiceAboutData {
 }
 
 interface ServiceProcessStep {
-  image: any;
+  image: string;
   heading: string;
   des: string;
-  dir?: any;
+  dir?: string;
 }
 
 interface ServiceProcessData {
@@ -60,23 +60,27 @@ interface ServiceProcessData {
   letters: string[];
   process: ServiceProcessStep[];
 }
-
+// Interface for individual technology items (unchanged, matches JSON)
 interface ServiceTechnologiesItem {
   name: string;
-  Icon: any;
+  Icon: string;
 }
 
+// New interface for each technology category (e.g., Frontend, Backend)
+interface ServiceTechnologyCategory {
+  name: string; // e.g., "Frontend", "Backend"
+  techs: ServiceTechnologiesItem[]; // Array of technologies like { name: "React.js", Icon: "react.png" }
+}
+
+// Updated interface for the technologies section
 interface ServiceTechnologiesData {
-  title: string;
-  des: string;
-  frontend: ServiceTechnologiesItem[];
-  backend: ServiceTechnologiesItem[];
-  database: ServiceTechnologiesItem[];
-  others: ServiceTechnologiesItem[];
+  title: string; // e.g., "Technologies We Use for Custom Software Development"
+  des: string; // Description
+  technologies: ServiceTechnologyCategory[]; // Array of categories like Frontend, Backend, etc.
 }
 
 interface ServiceOfferingCard {
-  icon: any;
+  icon: string;
   heading: string;
   des: string;
   btnText: string;
@@ -90,7 +94,7 @@ interface ServiceOfferingData {
 }
 
 interface ServiceBannerData {
-  image: any;
+  image: string;
   Subtitle: string;
   title: string;
   des: string;
@@ -98,9 +102,9 @@ interface ServiceBannerData {
 }
 
 interface ServiceIndusData {
-  image1: any;
-  image2: any;
-  image3: any;
+  image1: string;
+  image2: string;
+  image3: string;
   title: string;
   letters: string[];
   des1: string;
@@ -108,7 +112,7 @@ interface ServiceIndusData {
 }
 
 interface ServiceIndustriesItem {
-  image: any;
+  image: string;
   title: string;
   des: string;
   btnText: string;
@@ -121,10 +125,10 @@ interface ServiceIndustriesData {
 }
 
 interface ServiceClientData {
-  image1: any;
-  image2: any;
-  image3: any;
-  image4: any;
+  image1: string;
+  image2: string;
+  image3: string;
+  image4: string;
   imageText: string;
   title: string;
   letters: string[];
@@ -139,22 +143,22 @@ interface ServiceFAQItem {
 }
 
 interface ServiceFAQsData {
-  image1: any;
-  image2: any;
-  image3: any;
+  image1: string;
+  image2: string;
+  image3: string;
   subTitle: string;
   title: string;
   faqs: ServiceFAQItem[];
 }
 
 interface ServiceContactData {
-  image: any;
+  image: string;
   subTitle: string;
   title: string;
   btnText: string;
 }
 
-interface ServicePageData {
+export interface ServicePageData {
   serviceHero: ServiceHeroData;
   serviceLogos: ServiceLogosData;
   serviceCard: ServiceCardData;
@@ -169,18 +173,14 @@ interface ServicePageData {
   serviceFAQs: ServiceFAQsData;
   serviceContact: ServiceContactData;
 }
-
 const EditServicePage = () => {
   const serviceOptions = [
+    "custom-software-development",
     "website-development",
     "mobile-app-development",
     "ai-and-machine-learning",
-    "cloud-and-devops-solutions",
     "ui-ux-design",
     "ecommerce-development",
-    "customer-support",
-    "email-marketing",
-    "live-chat-support",
     "seo",
     "digital-marketing",
   ];
@@ -190,7 +190,7 @@ const EditServicePage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [selectedName, setSelectedName] = useState(
-    "website-development"
+    "custom-software-development"
   );
 
   const fetchServiceData = async (name: string) => {
@@ -689,253 +689,168 @@ const EditServicePage = () => {
             </div>
 
             {/* serviceTechnologies Section */}
-            {data.serviceTechnologies &&
-              <div className="border p-2 rounded-[10px] shadow-xl">
-                <h2 className="text-[25px] font-semibold my-[10px]">Technologies Section</h2>
-                <h3 className="font-semibold text-[18px] mb-[5px]">Title:</h3>
-                <input
-                  className="w-full p-2 border rounded"
-                  value={data.serviceTechnologies.title}
-                  onChange={(e) => handleChange("serviceTechnologies.title", e.target.value)}
-                  placeholder="Technologies Title"
-                />
-                <h3 className="font-semibold text-[18px] mt-[10px] mb-[5px]">Description:</h3>
-                <textarea
-                  className="w-full p-2 border rounded"
-                  value={data.serviceTechnologies.des}
-                  onChange={(e) => handleChange("serviceTechnologies.des", e.target.value)}
-                  placeholder="Technologies Description"
-                />
-                <div className="border p-2 mb-[10px]">
-                  <h3 className="font-semibold text-[18px] mt-[10px] mb-[5px]">Frontend Technologies:</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-[5px]">
-                    {data.serviceTechnologies.frontend.map((tech, i) => (
-                      <div key={i} className="mt-4 space-y-2 border p-2">
-                        <div className="flex items-center justify-between">
-                          <h3 className="font-semibold text-[18px]">Frontend Tech {i + 1}:</h3>
+            <div className="border p-2 rounded-[10px] shadow-xl">
+              <h2 className="text-[25px] font-semibold my-[10px]">Technologies Section</h2>
+
+              {/* Title */}
+              <h3 className="font-semibold text-[18px] mb-[5px]">Title:</h3>
+              <input
+                className="w-full p-2 border rounded"
+                value={data.serviceTechnologies.title}
+                onChange={(e) =>
+                  handleChange("serviceTechnologies.title", e.target.value)
+                }
+                placeholder="Technologies Title"
+              />
+
+              {/* Description */}
+              <h3 className="font-semibold text-[18px] mt-[10px] mb-[5px]">Description:</h3>
+              <textarea
+                className="w-full p-2 border rounded"
+                value={data.serviceTechnologies.des}
+                onChange={(e) =>
+                  handleChange("serviceTechnologies.des", e.target.value)
+                }
+                placeholder="Technologies Description"
+              />
+              {/* Save Changes */}
+              <button
+                className="bg-[#18185E] text-white px-4 py-2 rounded mb-4 "
+                onClick={handleSave}
+              >
+                Save All Changes
+              </button>
+              {/* Technology Categories */}
+              {data.serviceTechnologies.technologies.map((category, catIndex) => (
+                <div key={catIndex} className="border p-2 mb-[15px] rounded">
+                  <div className="flex justify-between items-center">
+                    <h3 className="font-semibold text-[18px]">
+                      Category: {category.name}
+                    </h3>
+                    <button
+                      className="bg-[#18185E] text-white px-3 py-1 rounded"
+                      onClick={() => {
+                        const newCategories = data.serviceTechnologies.technologies.filter(
+                          (_, i) => i !== catIndex
+                        );
+                        handleChange("serviceTechnologies.technologies", newCategories);
+                      }}
+                    >
+                      Remove Category
+                    </button>
+                  </div>
+
+                  {/* Edit Category Name */}
+                  <input
+                    className="w-full p-2 border rounded mt-2"
+                    value={category.name}
+                    onChange={(e) => {
+                      const newCategories = [...data.serviceTechnologies.technologies];
+                      newCategories[catIndex].name = e.target.value;
+                      handleChange("serviceTechnologies.technologies", newCategories);
+                    }}
+                    placeholder="Category Name (e.g. Frontend, Backend)"
+                  />
+
+                  {/* Techs inside this category */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-[10px] mt-4">
+                    {category.techs.map((tech, techIndex) => (
+                      <div
+                        key={techIndex}
+                        className="border p-2 rounded space-y-2 shadow"
+                      >
+                        <div className="flex justify-between items-center">
+                          <h4 className="font-semibold">Tech {techIndex + 1}</h4>
                           <button
                             className="bg-[#18185E] text-white px-2 py-1 rounded"
                             onClick={() => {
-                              const newFrontend = data.serviceTechnologies?.frontend.filter((_, index) => index !== i);
-                              handleChange("serviceTechnologies.frontend", newFrontend);
+                              const newCategories = [...data.serviceTechnologies.technologies];
+                              newCategories[catIndex].techs = newCategories[
+                                catIndex
+                              ].techs.filter((_, i) => i !== techIndex);
+                              handleChange("serviceTechnologies.technologies", newCategories);
                             }}
                           >
-                            Remove Tech
+                            Remove
                           </button>
                         </div>
-                        <img
-                          src={`${baseURL}/images/services/${tech.Icon}`}
-                          alt={`frontend-icon-${i}`}
-                          className="w-[50px] h-[50px] object-contain bg-[#18185E]"
-                        />
+
+                        {/* Tech Icon */}
+                        {tech.Icon && (
+                          <img
+                            src={`${baseURL}/images/services/${tech.Icon}`}
+                            alt={`tech-${techIndex}`}
+                            className="w-[50px] h-[50px] object-contain bg-[#18185E]"
+                          />
+                        )}
                         <input
                           type="file"
                           onChange={(e) =>
-                            handleDynamicImageUpload(e, `serviceTechnologies.frontend.${i}.Icon`, selectedName)
+                            handleDynamicImageUpload(
+                              e,
+                              `serviceTechnologies.technologies.${catIndex}.techs.${techIndex}.Icon`,
+                              selectedName
+                            )
                           }
                         />
+
+                        {/* Tech Name */}
                         <input
                           className="w-full p-2 border rounded"
                           value={tech.name}
                           onChange={(e) => {
-                            const frontend = [...data.serviceTechnologies.frontend];
-                            frontend[i].name = e.target.value;
-                            handleChange("serviceTechnologies.frontend", frontend);
+                            const newCategories = [...data.serviceTechnologies.technologies];
+                            newCategories[catIndex].techs[techIndex].name = e.target.value;
+                            handleChange("serviceTechnologies.technologies", newCategories);
                           }}
                           placeholder="Tech Name"
                         />
                       </div>
                     ))}
                   </div>
+
+                  {/* Add Tech to this category */}
                   <button
-                    className="bg-[#18185E] text-white px-4 py-2 rounded mt-[10px] mr-[5px]"
+                    className="bg-[#18185E] text-white px-4 py-2 rounded mt-3"
                     onClick={() => {
-                      const newFrontend = [...data.serviceTechnologies.frontend, { name: "", Icon: "" }];
-                      handleChange("serviceTechnologies.frontend", newFrontend);
+                      const newCategories = [...data.serviceTechnologies.technologies];
+                      newCategories[catIndex].techs.push({ name: "", Icon: "" });
+                      handleChange("serviceTechnologies.technologies", newCategories);
                     }}
                   >
-                    Add Frontend Tech
+                    Add Tech
                   </button>
                   <button
-                    className="bg-[#18185E] text-white px-4 py-2 rounded mt-[20px]"
+                    className="bg-[#18185E] text-white px-4 py-2 rounded mt-4 ml-3"
                     onClick={handleSave}
                   >
                     Save All Changes
                   </button>
                 </div>
-                <div className="border p-2 mb-[10px]">
-                  <h3 className="font-semibold text-[18px] mt-[10px] mb-[5px]">Backend Technologies:</h3>
-                  <div className="grid grid-cols- md:grid-cols-3 gap-[5px]">
-                    {data.serviceTechnologies.backend.map((tech, i) => (
-                      <div key={i} className="mt-4 space-y-2 border p-2">
-                        <div className="flex items-center justify-between">
-                          <h3 className="font-semibold text-[18px]">Backend Tech {i + 1}:</h3>
-                          <button
-                            className="bg-[#18185E] text-white px-2 py-1 rounded"
-                            onClick={() => {
-                              const newBackend = data.serviceTechnologies.backend.filter((_, index) => index !== i);
-                              handleChange("serviceTechnologies.backend", newBackend);
-                            }}
-                          >
-                            Remove Tech
-                          </button>
-                        </div>
-                        <img
-                          src={`${baseURL}/images/services/${tech.Icon}`}
-                          alt={`backend-icon-${i}`}
-                          className="w-[50px] h-[50px] object-contain bg-[#18185E]"
-                        />
-                        <input
-                          type="file"
-                          onChange={(e) =>
-                            handleDynamicImageUpload(e, `serviceTechnologies.backend.${i}.Icon`, selectedName)
-                          }
-                        />
-                        <input
-                          className="w-full p-2 border rounded"
-                          value={tech.name}
-                          onChange={(e) => {
-                            const backend = [...data.serviceTechnologies.backend];
-                            backend[i].name = e.target.value;
-                            handleChange("serviceTechnologies.backend", backend);
-                          }}
-                          placeholder="Tech Name"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                  <button
-                    className="bg-[#18185E] text-white px-4 py-2 rounded mt-[10px] mr-[5px]"
-                    onClick={() => {
-                      const newBackend = [...data.serviceTechnologies.backend, { name: "", Icon: "" }];
-                      handleChange("serviceTechnologies.backend", newBackend);
-                    }}
-                  >
-                    Add Backend Tech
-                  </button>
-                  <button
-                    className="bg-[#18185E] text-white px-4 py-2 rounded mt-[20px]"
-                    onClick={handleSave}
-                  >
-                    Save All Changes
-                  </button>
-                </div>
-                <div className="border p-2 mb-[10px]">
-                  <h3 className="font-semibold text-[18px] mt-[10px] mb-[5px]">Database Technologies:</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-[5px]">
-                    {data.serviceTechnologies.database.map((tech, i) => (
-                      <div key={i} className="mt-4 space-y-2 border p-2">
-                        <div className="flex items-center justify-between">
-                          <h3 className="font-semibold text-[18px]">Database Tech {i + 1}:</h3>
-                          <button
-                            className="bg-[#18185E] text-white px-2 py-1 rounded"
-                            onClick={() => {
-                              const newDatabase = data.serviceTechnologies.database.filter((_, index) => index !== i);
-                              handleChange("serviceTechnologies.database", newDatabase);
-                            }}
-                          >
-                            Remove Tech
-                          </button>
-                        </div>
-                        <img
-                          src={`${baseURL}/images/services/${tech.Icon}`}
-                          alt={`database-icon-${i}`}
-                          className="w-[50px] h-[50px] object-contain bg-[#18185E]"
-                        />
-                        <input
-                          type="file"
-                          onChange={(e) =>
-                            handleDynamicImageUpload(e, `serviceTechnologies.database.${i}.Icon`, selectedName)
-                          }
-                        />
-                        <input
-                          className="w-full p-2 border rounded"
-                          value={tech.name}
-                          onChange={(e) => {
-                            const database = [...data.serviceTechnologies.database];
-                            database[i].name = e.target.value;
-                            handleChange("serviceTechnologies.database", database);
-                          }}
-                          placeholder="Tech Name"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                  <button
-                    className="bg-[#18185E] text-white px-4 py-2 rounded mt-[10px] mr-[5px]"
-                    onClick={() => {
-                      const newDatabase = [...data.serviceTechnologies.database, { name: "", Icon: "" }];
-                      handleChange("serviceTechnologies.database", newDatabase);
-                    }}
-                  >
-                    Add Database Tech
-                  </button>
-                  <button
-                    className="bg-[#18185E] text-white px-4 py-2 rounded mt-[20px]"
-                    onClick={handleSave}
-                  >
-                    Save All Changes
-                  </button>
-                </div>
-                <div className="border p-2 mb-[10px]">
-                  <h3 className="font-semibold text-[18px] mt-[10px] mb-[5px]">Other Technologies:</h3>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-[5px]">
-                    {data.serviceTechnologies.others.map((tech, i) => (
-                      <div key={i} className="mt-4 space-y-2 border p-2">
-                        <div className="flex items-center justify-between">
-                          <h3 className="font-semibold text-[18px]">Other Tech {i + 1}:</h3>
-                          <button
-                            className="bg-[#18185E] text-white px-2 py-1 rounded"
-                            onClick={() => {
-                              const newOthers = data.serviceTechnologies.others.filter((_, index) => index !== i);
-                              handleChange("serviceTechnologies.others", newOthers);
-                            }}
-                          >
-                            Remove Tech
-                          </button>
-                        </div>
-                        <img
-                          src={`${baseURL}/images/services/${tech.Icon}`}
-                          alt={`other-icon-${i}`}
-                          className="w-[50px] h-[50px] object-contain bg-[#18185E]"
-                        />
-                        <input
-                          type="file"
-                          onChange={(e) =>
-                            handleDynamicImageUpload(e, `serviceTechnologies.others.${i}.Icon`, selectedName)
-                          }
-                        />
-                        <input
-                          className="w-full p-2 border rounded"
-                          value={tech.name}
-                          onChange={(e) => {
-                            const others = [...data.serviceTechnologies.others];
-                            others[i].name = e.target.value;
-                            handleChange("serviceTechnologies.others", others);
-                          }}
-                          placeholder="Tech Name"
-                        />
-                      </div>
-                    ))}
-                  </div>
-                  <button
-                    className="bg-[#18185E] text-white px-4 py-2 rounded mt-[10px] mr-[5px]"
-                    onClick={() => {
-                      const newOthers = [...data.serviceTechnologies.others, { name: "", Icon: "" }];
-                      handleChange("serviceTechnologies.others", newOthers);
-                    }}
-                  >
-                    Add Other Tech
-                  </button>
-                  <button
-                    className="bg-[#18185E] text-white px-4 py-2 rounded mt-[20px]"
-                    onClick={handleSave}
-                  >
-                    Save All Changes
-                  </button>
-                </div>
-              </div>
-            }
+              ))}
+
+              {/* Add New Category */}
+              <button
+                className="bg-[#18185E] text-white px-4 py-2 rounded mt-4"
+                onClick={() => {
+                  const newCategories = [
+                    ...data.serviceTechnologies.technologies,
+                    { name: "New Category", techs: [] },
+                  ];
+                  handleChange("serviceTechnologies.technologies", newCategories);
+                }}
+              >
+                Add Category
+              </button>
+
+              {/* Save Changes */}
+              <button
+                className="bg-[#18185E] text-white px-4 py-2 rounded mt-4 ml-3"
+                onClick={handleSave}
+              >
+                Save All Changes
+              </button>
+            </div>
             {/* serviceOffering Section */}
             <div className="border p-2 rounded-[10px] shadow-xl">
               <h2 className="text-[25px] font-semibold my-[10px]">Offering Section</h2>
@@ -1220,7 +1135,7 @@ const EditServicePage = () => {
               />
 
               {/* Letters */}
-              <h3 className="font-semibold text-[18px] mt-[10px] mb-[5px]">Letters :</h3>
+              <h3 className="font-semibold text-[18px] mt-[10px] mb-[5px]">Letters to Change Color in Title:</h3>
               <div className="grid grid-cols-2 md:grid-cols-5 gap-[5px]">
                 {data.serviceIndustries.letters.map((letter, i) => (
                   <div key={i} className="flex items-center gap-2 mt-2">
@@ -1419,7 +1334,7 @@ const EditServicePage = () => {
                 onChange={(e) => handleChange("serviceClient.title", e.target.value)}
                 placeholder="Client Title"
               />
-              <h3 className="font-semibold text-[18px] mt-[10px] mb-[5px]">Letters:</h3>
+              <h3 className="font-semibold text-[18px] mt-[10px] mb-[5px]">Letters to Change Color in Title:</h3>
               <div className="grid grid-cols-2 md:grid-cols-5 gap-[5px]">
                 {data.serviceClient.letters.map((letter, i) => (
                   <div key={i} className="flex items-center gap-2 mt-2">

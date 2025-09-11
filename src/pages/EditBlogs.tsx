@@ -355,14 +355,15 @@ const EditBlogEditor = () => {
               onChange={(e) => {
                 const updated = [...items];
                 const newType = e.target.value;
+                const currentValue = updated[index].value; // Store current value
 
                 updated[index].type = newType;
 
-                // Reset structure depending on type
+                // Preserve value for text-based types
                 if (["h1", "h2", "h3", "p", "strong"].includes(newType)) {
-                  updated[index].value = "";
+                  updated[index].value = currentValue || ""; // Keep existing value or set to empty string
                 } else if (["ul", "ol"].includes(newType)) {
-                  updated[index].value = [""];
+                  updated[index].value = Array.isArray(currentValue) ? currentValue : [""]; 
                 } else if (newType === "table") {
                   updated[index].headers = ["Header 1", "Header 2"];
                   updated[index].rows = [["Cell 1", "Cell 2"]];
@@ -389,7 +390,6 @@ const EditBlogEditor = () => {
               <option value="singleimage">Single Image</option>
               <option value="doubleimage">Double Image</option>
               <option value="tripleimage">Triple Image</option>
-
             </select>
 
 
