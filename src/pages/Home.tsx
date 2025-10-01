@@ -145,8 +145,10 @@ const EditHomeData: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement>,
     imageKey: string
   ) => {
-    const file = e.target.files?.[0];
+    const file = e.target.files?.[0]; 
     if (!file) return;
+
+
 
     const formData = new FormData();
     formData.append("image", file);
@@ -192,11 +194,10 @@ const EditHomeData: React.FC = () => {
   return (
     <>
       <div
-        className={`${
-          toggle == false
-            ? "w-full"
-            : "md:w-[80%] lg:w-[82%] xl:w-[85%] 2xl:w-[87%]"
-        } duration-500  font-semibold ml-auto py-[20px] px-[30px] mt-[40px] p-6  space-y-9`}
+        className={`${toggle == false
+          ? "w-full"
+          : "md:w-[80%] lg:w-[82%] xl:w-[85%] 2xl:w-[87%]"
+          } duration-500  font-semibold ml-auto py-[20px] px-[30px] mt-[40px] p-6  space-y-9`}
       >
         {isLoading && <Loader />}
 
@@ -357,26 +358,25 @@ const EditHomeData: React.FC = () => {
                   Save Changes
                 </button>
                 <div>
-                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-[10px] my-[10px]">
+                  <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-[10px] gap-y-[30px] mt-[30px]">
                     {data?.homeServices?.allServices?.map((service, index) => (
                       <div
                         key={index}
-                        className="my-[30px] flex flex-col gap-[5px]"
+                        className="flex flex-col gap-[5px] border p-2 rounded"
                       >
                         <h2 className="color text-[18px] font-semibold">
                           Service {index + 1}:
                         </h2>
+
+                        {/* Title */}
                         <input
-                          className="block w-full my-2 p-2 border"
+                          className="block w-full p-2 border"
                           type="text"
                           placeholder="Service Title"
                           value={service.title}
                           onChange={(e) => {
-                            const updatedServices = [
-                              ...data.homeServices.allServices,
-                            ];
+                            const updatedServices = [...data.homeServices.allServices];
                             updatedServices[index].title = e.target.value;
-
                             setData({
                               ...data,
                               homeServices: {
@@ -386,22 +386,97 @@ const EditHomeData: React.FC = () => {
                             });
                           }}
                         />
+
+                        {/* ID/Slug */}
+                        <input
+                          className="block w-full  p-2 border"
+                          type="text"
+                          placeholder="Service url"
+                          value={service.id}
+                          onChange={(e) => {
+                            const updatedServices = [...data.homeServices.allServices];
+                            updatedServices[index].id = e.target.value;
+                            setData({
+                              ...data,
+                              homeServices: {
+                                ...data.homeServices,
+                                allServices: updatedServices,
+                              },
+                            });
+                          }}
+                        />
+
+                        {/* Image */}
                         <img
                           src={`${baseURL}/images/home/${service.imageUrl}`}
                           className="rounded-[5px] w-full h-[100%]"
                         />
+
                         <input
                           type="file"
                           onChange={(e) =>
                             handleDynamicImageUpload(
                               e,
-                              `homeServices.allServices[${index}].imageUrl`
+                              `homeServices.allServices.${index}.imageUrl` // ✅ dot notation
                             )
                           }
                         />
+
+                        {/* Remove Button */}
+                        <button
+                          onClick={() => {
+                            const updatedServices = data.homeServices.allServices.filter(
+                              (_, i) => i !== index
+                            );
+                            setData({
+                              ...data,
+                              homeServices: {
+                                ...data.homeServices,
+                                allServices: updatedServices,
+                              },
+                            });
+                          }}
+                          className="mt-2 bg text-white p-1 rounded"
+                        >
+                          Remove
+                        </button>
                       </div>
                     ))}
+
+                    {/* Add Service Button */}
+                    <div className="col-span-full">
+                      <button
+                        onClick={() => {
+                          const newService = {
+                            id: "",
+                            title: "",
+                            imageUrl: "",
+                          };
+                          setData({
+                            ...data,
+                            homeServices: {
+                              ...data.homeServices,
+                              allServices: [
+                                ...data.homeServices.allServices,
+                                newService,
+                              ],
+                            },
+                          });
+                        }}
+                        className="bg text-white p-2 rounded mr-1"
+                      >
+                        + Add Service
+                      </button>
+                      <button
+                        className="bg text-white px-4 py-2 rounded "
+                        onClick={handleSave}
+                      >
+                        Save Changes
+                      </button>
+                    </div>
                   </div>
+
+
                 </div>
               </div>
             </section>
@@ -644,9 +719,9 @@ const EditHomeData: React.FC = () => {
 
           {/* FAQ Section */}
           <section className="space-y-6">
-            <h1 className="color text-[32px] font-semibold my-[10px]">
-              FAQ Section
-            </h1>
+            <h1 className="color text-[32px] font-semibold my-[10px]">FAQ Section</h1>
+
+            {/* Title */}
             <div>
               <h2 className="text-[18px] font-semibold">FAQ Title:</h2>
               <input
@@ -661,6 +736,8 @@ const EditHomeData: React.FC = () => {
                 }
               />
             </div>
+
+            {/* Subtitle */}
             <div>
               <h2 className="text-[18px] font-semibold">FAQ Subtitle:</h2>
               <input
@@ -676,9 +753,12 @@ const EditHomeData: React.FC = () => {
               />
             </div>
 
+            {/* FAQs */}
             {data.faq.faqs.map((item, i) => (
-              <div key={i} className="space-y-2">
+              <div key={i} className="space-y-2 border p-3 rounded-md relative">
                 <h3 className="text-[18px] font-semibold">FAQ {i + 1}:</h3>
+
+                {/* Question */}
                 <input
                   className="block w-full p-2 border"
                   placeholder="Faq Question"
@@ -689,6 +769,8 @@ const EditHomeData: React.FC = () => {
                     setData({ ...data, faq: { ...data.faq, faqs } });
                   }}
                 />
+
+                {/* Answer */}
                 <textarea
                   className="block w-full p-2 border"
                   placeholder="Faq Answer"
@@ -699,10 +781,39 @@ const EditHomeData: React.FC = () => {
                     setData({ ...data, faq: { ...data.faq, faqs } });
                   }}
                 />
+
+                {/* Remove Button */}
+                <button
+                  className="absolute top-0 right-2 bg text-white px-3 py-1 rounded"
+                  onClick={() => {
+                    const faqs = data.faq.faqs.filter((_, idx) => idx !== i);
+                    setData({ ...data, faq: { ...data.faq, faqs } });
+                  }}
+                >
+                  Remove
+                </button>
               </div>
             ))}
+
+            {/* Add FAQ Button */}
             <button
-              className="bg text-white px-4 py-2 rounded mt-1"
+              className="bg text-white px-4 py-2 rounded"
+              onClick={() => {
+                setData({
+                  ...data,
+                  faq: {
+                    ...data.faq,
+                    faqs: [...data.faq.faqs, { question: "", answer: "" }],
+                  },
+                });
+              }}
+            >
+              Add FAQ
+            </button>
+
+            {/* Save Button */}
+            <button
+              className="bg text-white px-4 py-2 rounded mt-1 ml-2"
               onClick={handleSave}
             >
               Save Changes
@@ -710,8 +821,8 @@ const EditHomeData: React.FC = () => {
 
             {/* Images */}
             <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-[10px] mt-[30px]">
-              {/* Img1  */}
-              <div className="flex flex-col gap-[5px] ">
+              {/* Img1 */}
+              <div className="flex flex-col gap-[5px]">
                 <img
                   src={`${baseURL}/images/home/${data?.faq?.img1}`}
                   className="h-[300px] object-cover"
@@ -739,10 +850,10 @@ const EditHomeData: React.FC = () => {
                 </button>
               </div>
 
-              {/* Img2  */}
-              <div className="flex flex-col gap-[5px] ">
+              {/* Img2 */}
+              <div className="flex flex-col gap-[5px]">
                 <img
-                  src={`${baseURL}/images/home/${data?.faq?.img2} `}
+                  src={`${baseURL}/images/home/${data?.faq?.img2}`}
                   className="h-[300px] object-cover"
                 />
                 <input
@@ -768,8 +879,8 @@ const EditHomeData: React.FC = () => {
                 </button>
               </div>
 
-              {/* Img3  */}
-              <div className="flex flex-col gap-[5px] ">
+              {/* Img3 */}
+              <div className="flex flex-col gap-[5px]">
                 <img
                   src={`${baseURL}/images/home/${data?.faq?.img3}`}
                   className="h-[300px] object-cover"
@@ -798,6 +909,7 @@ const EditHomeData: React.FC = () => {
               </div>
             </div>
           </section>
+
 
           {/* Contact banner */}
           <div>
@@ -872,13 +984,15 @@ const EditHomeData: React.FC = () => {
                   type="text"
                   placeholder="Alt Text"
                   value={data.contactBanner.alt}
-                  onChange={(e)=>{setData({
-                    ...data,
-                    contactBanner: {
-                      ...data.contactBanner,
-                      alt: e.target.value,
-                    },
-                  })}}
+                  onChange={(e) => {
+                    setData({
+                      ...data,
+                      contactBanner: {
+                        ...data.contactBanner,
+                        alt: e.target.value,
+                      },
+                    })
+                  }}
                 />
               </div>
               <button
@@ -934,13 +1048,13 @@ const EditHomeData: React.FC = () => {
                     }}
                   />
                   <input
-                  type="number"
+                    type="number"
                     className="block w-[50%] p-2 border "
                     value={t.rating}
                     placeholder="Rating"
                     onChange={(e) => {
                       const updated = [...data.testimonials.testimonials];
-                       updated[i].rating = Number(e.target.value);
+                      updated[i].rating = Number(e.target.value);
                       setData({
                         ...data,
                         testimonials: {

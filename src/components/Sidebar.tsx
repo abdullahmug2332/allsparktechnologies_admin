@@ -9,6 +9,7 @@ import { RiComputerLine } from "react-icons/ri";
 import logo from "../assets/footer-logo.svg"; 
 import { CgToday } from "react-icons/cg";
 import { TiMessages } from "react-icons/ti";
+import { GrBusinessService } from "react-icons/gr";
 const Sidebar: React.FC = () => {
   const location = useLocation();
   const isAuthPage: Boolean = location.pathname === "/auth";
@@ -27,7 +28,7 @@ const Sidebar: React.FC = () => {
         className="w-[120px] sm:w-[130px] md:w-[140px] mx-auto mt-[20px] hover:scale-[1.06] duration-300 cursor-pointer"
       />
 
-      <div className="flex flex-col ml-[40px] gap-[20px] mt-[90px]">
+      <div className="flex flex-col ml-[20px] md:ml-[40px] gap-[20px] mt-[90px]">
         <Link
           to="/"
           className="flex items-center gap-[10px] hover:scale-[1.06] duration-300 cursor-pointer"
@@ -48,6 +49,13 @@ const Sidebar: React.FC = () => {
         >
           <RiComputerLine className="text-[21px] text-white" />
           <div className="text-white text-[16px] font-semibold">Services</div>
+        </Link>
+        <Link
+          to="/subservices"
+          className="flex items-center gap-[10px] hover:scale-[1.06] duration-300 cursor-pointer"
+        >
+          <GrBusinessService className="text-[21px] text-white" />
+          <div className="text-white text-[16px] font-semibold">Sub Services</div>
         </Link>
         <Link
           to="/contact"

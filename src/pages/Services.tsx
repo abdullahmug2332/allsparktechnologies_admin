@@ -181,6 +181,10 @@ const EditServicePage = () => {
     "ai-and-machine-learning",
     "ui-ux-design",
     "ecommerce-development",
+    "customer-support",
+    "email-support",
+    "live-chat-support",
+    "taxi-support",
     "seo",
     "digital-marketing",
   ];
@@ -209,20 +213,29 @@ const EditServicePage = () => {
     fetchServiceData(selectedName);
   }, [selectedName]);
 
-  const handleSave = async () => {
-    setLoading(true);
+  const handleSave = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.preventDefault();
+    const scrollPosition = window.scrollY;
+    
     try {
+      setLoading(true);
       await axios.put(`${baseURL}/service`, {
         name: selectedName,
         json: data,
       });
       setLoading(false);
+
       alert("Data updated successfully!");
+
+      requestAnimationFrame(() => {
+        window.scrollTo(0, scrollPosition);
+      });
     } catch (err) {
       console.error(err);
       alert("Save failed.");
     } finally {
       setLoading(false);
+
     }
   };
 
@@ -238,6 +251,81 @@ const EditServicePage = () => {
     setData(newData);
     setLoading(false);
   };
+  // const handleDynamicImageUpload = async (
+  //   e: React.ChangeEvent<HTMLInputElement>,
+  //   imageKey: string,
+  //   selectedName: string
+  // ): Promise<void> => {
+  //   const file = e.target.files?.[0];
+  //   if (!file || !selectedName) return;
+  //   const formData = new FormData();
+  //   formData.append("image", file);
+  //   formData.append("imageKey", imageKey);
+  //   formData.append("name", selectedName);
+
+  //   try {
+  //     setLoading(true);
+  //     const res = await fetch(`${baseURL}/upload-service-image`, {
+  //       method: "POST",
+  //       body: formData,
+  //     });
+
+  //     const result: { message?: string; path?: string; error?: string } =
+  //       await res.json();
+
+  //     if (res.ok && result.path) {
+  //       setLoading(false);
+  //       // ✅ Reflect the image update instantly in UI
+  //       handleChange(imageKey, result.path);
+  //     } else {
+  //       alert(result.error || "Unknown error occurred during image upload.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Upload failed:", error);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  //   const handleDynamicImageUpload = async (
+  //   e: React.ChangeEvent<HTMLInputElement>,
+  //   imageKey: string,
+  //   selectedName: string
+  // ): Promise<void> => {
+  //   const file = e.target.files?.[0];
+  //   if (!file || !selectedName) return;
+
+  //   // Save current scroll position
+  //   const scrollPosition = window.scrollY;
+
+  //   const formData = new FormData();
+  //   formData.append("image", file);
+  //   formData.append("imageKey", imageKey);
+  //   formData.append("name", selectedName);
+
+  //   try {
+  //     setLoading(true);
+  //     const res = await fetch(`${baseURL}/upload-service-image`, {
+  //       method: "POST",
+  //       body: formData,
+  //     });
+
+  //     const result: { message?: string; path?: string; error?: string } = await res.json();
+
+  //     if (res.ok && result.path) {
+  //       // Update the image path in the state
+  //       handleChange(imageKey, result.path);
+  //     } else {
+  //       alert(result.error || "Unknown error occurred during image upload.");
+  //     }
+  //   } catch (error) {
+  //     console.error("Upload failed:", error);
+  //     alert("Image upload failed.");
+  //   } finally {
+  //     setLoading(false);
+  //     // Restore scroll position after state update
+  //     window.scrollTo(0, scrollPosition);
+  //   }
+  // };
   const handleDynamicImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
     imageKey: string,
@@ -245,32 +333,36 @@ const EditServicePage = () => {
   ): Promise<void> => {
     const file = e.target.files?.[0];
     if (!file || !selectedName) return;
+
+    // Save current scroll position
+    const scrollPosition = window.scrollY;
+
     const formData = new FormData();
     formData.append("image", file);
     formData.append("imageKey", imageKey);
     formData.append("name", selectedName);
 
     try {
-      setLoading(true);
       const res = await fetch(`${baseURL}/upload-service-image`, {
         method: "POST",
         body: formData,
       });
 
-      const result: { message?: string; path?: string; error?: string } =
-        await res.json();
+      const result: { message?: string; path?: string; error?: string } = await res.json();
 
       if (res.ok && result.path) {
-        setLoading(false);
-        // ✅ Reflect the image update instantly in UI
+        // Update the image path in the state
         handleChange(imageKey, result.path);
+        // Restore scroll position after state update
+        requestAnimationFrame(() => {
+          window.scrollTo(0, scrollPosition);
+        });
       } else {
         alert(result.error || "Unknown error occurred during image upload.");
       }
     } catch (error) {
       console.error("Upload failed:", error);
-    } finally {
-      setLoading(false);
+      alert("Image upload failed.");
     }
   };
 
@@ -296,7 +388,7 @@ const EditServicePage = () => {
         <div className="relative">
           <h1 className="text-[32px] font-semibold mt-[20px]">Edit Service Page</h1>
           <select
-            className="bg-[#18185E] text-white text-center py-[10px] border p-2 rounded relative md:absolute top-[0px] right-0 focus:outline-0 cursor-pointer"
+            className="bg-[#18185E] text-white text-center py-[10px] border p-2 rounded relative md:fixed md:top-[70px] md:right-[20px] focus:outline-0 cursor-pointer"
             value={selectedName}
             onChange={(e) => setSelectedName(e.target.value)}
           >
@@ -381,6 +473,7 @@ const EditServicePage = () => {
 
 
               <button
+                type="button"
                 className="bg-[#18185E] text-white px-4 py-2 rounded mt-[20px]"
                 onClick={handleSave}
               >
@@ -388,28 +481,7 @@ const EditServicePage = () => {
               </button>
             </div>
 
-            {/* serviceLogos Section */}
-            <div className="border p-2 rounded-[10px] shadow-xl">
-              <h2 className="text-[25px] font-semibold my-[10px]">Logos Section</h2>
-              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-[5px]">
-                {data.serviceLogos.logos.map((logo, i) => (
-                  <div key={i} className="mt-2">
-                    <h3 className="font-semibold text-[18px] mb-[5px]">Logo {i + 1}:</h3>
-                    <img
-                      src={`${baseURL}/images/services/${logo}`}
-                      alt={`logo-${i}`}
-                      className="w-full h-[100px] object-contain border"
-                    />
-                    <input
-                      type="file"
-                      onChange={(e) =>
-                        handleDynamicImageUpload(e, `serviceLogos.logos.${i}`, selectedName)
-                      }
-                    />
-                  </div>
-                ))}
-              </div>
-            </div>
+
 
             {/* serviceCard Section */}
             <div className="border p-2 rounded-[10px] shadow-xl">
@@ -471,7 +543,7 @@ const EditServicePage = () => {
 
                 </div>
               ))}
-              <button
+              <button type="button"
                 className="bg-[#18185E] text-white px-4 py-2 rounded mt-[20px]"
                 onClick={handleSave}
               >
@@ -569,7 +641,7 @@ const EditServicePage = () => {
                   </div>
                 ))}
               </div>
-              <button
+              <button type="button"
                 className="bg-[#18185E] text-white px-4 py-2 rounded mt-[20px]"
                 onClick={handleSave}
               >
@@ -601,9 +673,10 @@ const EditServicePage = () => {
                       }}
                       placeholder={`Letter ${i + 1}`}
                     />
-                    <button
+                    <button type="button"
                       className="bg-[#18185E] text-white px-2 py-1 rounded"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
                         const newLetters = data.serviceProcess.letters.filter((_, index) => index !== i);
                         handleChange("serviceProcess.letters", newLetters);
                       }}
@@ -613,9 +686,10 @@ const EditServicePage = () => {
                   </div>
                 ))}
               </div>
-              <button
+              <button type="button"
                 className="bg-[#18185E] text-white px-4 py-2 rounded mt-[10px]"
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   const newLetters = [...data.serviceProcess.letters, ""];
                   handleChange("serviceProcess.letters", newLetters);
                 }}
@@ -668,8 +742,21 @@ const EditServicePage = () => {
                       <img
                         src={`${baseURL}/images/services/${proc.dir}`}
                         alt={`process-dir-${i}`}
-                        className="w-[50px] h-[50px] object-contain"
+                        className="w-[50px] h-[50px] object-contain dir"
                       />
+
+                      {/* Remove Dir Button */}
+                      <button type="button"
+                        className="bg text-white px-2 py-1 rounded "
+                        onClick={(e) => {
+                          e.preventDefault();
+                          const process = [...data.serviceProcess.process];
+                          process[i].dir = ""; // or null, depending on your backend expectation
+                          handleChange("serviceProcess.process", process);
+                        }}
+                      >
+                        Remove Dir
+                      </button>
                       <input
                         type="file"
                         onChange={(e) =>
@@ -680,7 +767,7 @@ const EditServicePage = () => {
                   )}
                 </div>
               ))}
-              <button
+              <button type="button"
                 className="bg-[#18185E] text-white px-4 py-2 rounded mt-[20px]"
                 onClick={handleSave}
               >
@@ -714,7 +801,7 @@ const EditServicePage = () => {
                 placeholder="Technologies Description"
               />
               {/* Save Changes */}
-              <button
+              <button type="button"
                 className="bg-[#18185E] text-white px-4 py-2 rounded mb-4 "
                 onClick={handleSave}
               >
@@ -727,9 +814,10 @@ const EditServicePage = () => {
                     <h3 className="font-semibold text-[18px]">
                       Category: {category.name}
                     </h3>
-                    <button
+                    <button type="button"
                       className="bg-[#18185E] text-white px-3 py-1 rounded"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
                         const newCategories = data.serviceTechnologies.technologies.filter(
                           (_, i) => i !== catIndex
                         );
@@ -761,9 +849,10 @@ const EditServicePage = () => {
                       >
                         <div className="flex justify-between items-center">
                           <h4 className="font-semibold">Tech {techIndex + 1}</h4>
-                          <button
+                          <button type="button"
                             className="bg-[#18185E] text-white px-2 py-1 rounded"
-                            onClick={() => {
+                            onClick={(e) => {
+                              e.preventDefault();
                               const newCategories = [...data.serviceTechnologies.technologies];
                               newCategories[catIndex].techs = newCategories[
                                 catIndex
@@ -810,9 +899,10 @@ const EditServicePage = () => {
                   </div>
 
                   {/* Add Tech to this category */}
-                  <button
+                  <button type="button"
                     className="bg-[#18185E] text-white px-4 py-2 rounded mt-3"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.preventDefault();
                       const newCategories = [...data.serviceTechnologies.technologies];
                       newCategories[catIndex].techs.push({ name: "", Icon: "" });
                       handleChange("serviceTechnologies.technologies", newCategories);
@@ -820,7 +910,7 @@ const EditServicePage = () => {
                   >
                     Add Tech
                   </button>
-                  <button
+                  <button type="button"
                     className="bg-[#18185E] text-white px-4 py-2 rounded mt-4 ml-3"
                     onClick={handleSave}
                   >
@@ -830,9 +920,10 @@ const EditServicePage = () => {
               ))}
 
               {/* Add New Category */}
-              <button
+              <button type="button"
                 className="bg-[#18185E] text-white px-4 py-2 rounded mt-4"
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   const newCategories = [
                     ...data.serviceTechnologies.technologies,
                     { name: "New Category", techs: [] },
@@ -844,7 +935,7 @@ const EditServicePage = () => {
               </button>
 
               {/* Save Changes */}
-              <button
+              <button type="button"
                 className="bg-[#18185E] text-white px-4 py-2 rounded mt-4 ml-3"
                 onClick={handleSave}
               >
@@ -875,9 +966,10 @@ const EditServicePage = () => {
                       }}
                       placeholder={`Letter ${i + 1}`}
                     />
-                    <button
+                    <button type="button"
                       className="bg-[#18185E] text-white px-2 py-1 rounded"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
                         const newLetters = data.serviceOffering.letters.filter((_, index) => index !== i);
                         handleChange("serviceOffering.letters", newLetters);
                       }}
@@ -887,16 +979,17 @@ const EditServicePage = () => {
                   </div>
                 ))}
               </div>
-              <button
+              <button type="button"
                 className="bg-[#18185E] text-white px-4 py-2 rounded mt-[10px] mr-[5px]"
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   const newLetters = [...data.serviceOffering.letters, ""];
                   handleChange("serviceOffering.letters", newLetters);
                 }}
               >
                 Add Letter
               </button>
-              <button
+              <button type="button"
                 className="bg-[#18185E] text-white px-4 py-2 rounded mt-[20px]"
                 onClick={handleSave}
               >
@@ -953,7 +1046,7 @@ const EditServicePage = () => {
                     }}
                     placeholder="Button Text"
                   />
-                  <button
+                  <button type="button"
                     className="bg-[#18185E] text-white px-4 py-2 rounded mt-[20px]"
                     onClick={handleSave}
                   >
@@ -1008,7 +1101,7 @@ const EditServicePage = () => {
                 onChange={(e) => handleChange("serviceBanner.btnText", e.target.value)}
                 placeholder="Button Text"
               />
-              <button
+              <button type="button"
                 className="bg-[#18185E] text-white px-4 py-2 rounded mt-[20px]"
                 onClick={handleSave}
               >
@@ -1078,9 +1171,10 @@ const EditServicePage = () => {
                       }}
                       placeholder={`Letter ${i + 1}`}
                     />
-                    <button
+                    <button type="button"
                       className="bg-[#18185E] text-white px-2 py-1 rounded"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
                         const newLetters = data.serviceIndus.letters.filter((_, index) => index !== i);
                         handleChange("serviceIndus.letters", newLetters);
                       }}
@@ -1090,9 +1184,10 @@ const EditServicePage = () => {
                   </div>
                 ))}
               </div>
-              <button
+              <button type="button"
                 className="bg-[#18185E] text-white px-4 py-2 rounded mt-[10px]"
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   const newLetters = [...data.serviceIndus.letters, ""];
                   handleChange("serviceIndus.letters", newLetters);
                 }}
@@ -1113,7 +1208,7 @@ const EditServicePage = () => {
                 onChange={(e) => handleChange("serviceIndus.des2", e.target.value)}
                 placeholder="Description 2"
               />
-              <button
+              <button type="button"
                 className="bg-[#18185E] text-white px-4 py-2 rounded mt-[20px]"
                 onClick={handleSave}
               >
@@ -1149,9 +1244,10 @@ const EditServicePage = () => {
                       }}
                       placeholder={`Letter ${i + 1}`}
                     />
-                    <button
+                    <button type="button"
                       className="bg-[#18185E] text-white px-2 py-1 rounded"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
                         const newLetters = data.serviceIndustries.letters.filter((_, index) => index !== i);
                         handleChange("serviceIndustries.letters", newLetters);
                       }}
@@ -1161,9 +1257,10 @@ const EditServicePage = () => {
                   </div>
                 ))}
               </div>
-              <button
+              <button type="button"
                 className="bg-[#18185E] text-white px-4 py-2 rounded mt-[10px] mr-[5px]"
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   const newLetters = [...data.serviceIndustries.letters, ""];
                   handleChange("serviceIndustries.letters", newLetters);
                 }}
@@ -1226,15 +1323,16 @@ const EditServicePage = () => {
                   />
 
                   <div className="flex gap-2">
-                    <button
+                    <button type="button"
                       className="bg-[#18185E] text-white px-4 py-2 rounded"
                       onClick={handleSave}
                     >
                       Save Changes
                     </button>
-                    <button
+                    <button type="button"
                       className="bg-[#18185E] text-white px-4 py-2 rounded"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
                         const newIndustries = data.serviceIndustries.industries.filter((_, index) => index !== i);
                         handleChange("serviceIndustries.industries", newIndustries);
                       }}
@@ -1245,14 +1343,15 @@ const EditServicePage = () => {
                 </div>
               ))}
 
-              <button
+              <button type="button"
                 className="bg-[#18185E] text-white px-4 py-2 rounded mt-[20px] mr-[5px]"
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   const newIndustry = {
                     image: "",
                     title: "",
                     des: "",
-                    btnText: "",
+                    btnText: "Read more",
                   };
                   const newIndustries = [...data.serviceIndustries.industries, newIndustry];
                   handleChange("serviceIndustries.industries", newIndustries);
@@ -1260,7 +1359,7 @@ const EditServicePage = () => {
               >
                 Add Industry
               </button>
-              <button
+              <button type="button"
                 className="bg-[#18185E] text-white px-4 py-2 rounded"
                 onClick={handleSave}
               >
@@ -1348,9 +1447,10 @@ const EditServicePage = () => {
                       }}
                       placeholder={`Letter ${i + 1}`}
                     />
-                    <button
+                    <button type="button"
                       className="bg-[#18185E] text-white px-2 py-1 rounded"
-                      onClick={() => {
+                      onClick={(e) => {
+                        e.preventDefault();
                         const newLetters = data.serviceClient.letters.filter((_, index) => index !== i);
                         handleChange("serviceClient.letters", newLetters);
                       }}
@@ -1360,9 +1460,10 @@ const EditServicePage = () => {
                   </div>
                 ))}
               </div>
-              <button
+              <button type="button"
                 className="bg-[#18185E] text-white px-4 py-2 rounded mt-[10px]"
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   const newLetters = [...data.serviceClient.letters, ""];
                   handleChange("serviceClient.letters", newLetters);
                 }}
@@ -1396,9 +1497,10 @@ const EditServicePage = () => {
                     }}
                     placeholder={`List Item ${i + 1}`}
                   />
-                  <button
+                  <button type="button"
                     className="bg-[#18185E] text-white px-2 py-1 rounded"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.preventDefault();
                       const newLis = data.serviceClient.lis.filter((_, index) => index !== i);
                       handleChange("serviceClient.lis", newLis);
                     }}
@@ -1408,16 +1510,17 @@ const EditServicePage = () => {
                 </div>
               ))}
 
-              <button
+              <button type="button"
                 className="bg-[#18185E] text-white px-4 py-2 rounded mt-[10px] mr-[5px]"
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   const newLis = [...data.serviceClient.lis, ""];
                   handleChange("serviceClient.lis", newLis);
                 }}
               >
                 Add List Item
               </button>
-              <button
+              <button type="button"
                 className="bg-[#18185E] text-white px-4 py-2 rounded"
                 onClick={handleSave}
               >
@@ -1506,9 +1609,10 @@ const EditServicePage = () => {
                     placeholder="FAQ Answer"
                   />
 
-                  <button
+                  <button type="button"
                     className="bg-[#18185E] text-white px-3 py-1 rounded"
-                    onClick={() => {
+                    onClick={(e) => {
+                      e.preventDefault();
                       const newFaqs = data.serviceFAQs.faqs.filter((_, index) => index !== i);
                       handleChange("serviceFAQs.faqs", newFaqs);
                     }}
@@ -1518,9 +1622,10 @@ const EditServicePage = () => {
                 </div>
               ))}
 
-              <button
+              <button type="button"
                 className="bg-[#18185E] text-white px-4 py-2 rounded mt-[10px] mr-[5px]"
-                onClick={() => {
+                onClick={(e) => {
+                  e.preventDefault();
                   const newFaq = { question: "", answer: "" };
                   const newFaqs = [...data.serviceFAQs.faqs, newFaq];
                   handleChange("serviceFAQs.faqs", newFaqs);
@@ -1528,13 +1633,36 @@ const EditServicePage = () => {
               >
                 Add FAQ
               </button>
-              <button
+              <button type="button"
                 className="bg-[#18185E] text-white px-4 py-2 rounded mt-[20px]"
                 onClick={handleSave}
               >
                 Save All Changes
               </button>
 
+            </div>
+
+            {/* serviceLogos Section */}
+            <div className="border p-2 rounded-[10px] shadow-xl">
+              <h2 className="text-[25px] font-semibold my-[10px]">Logos Section</h2>
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-[5px]">
+                {data.serviceLogos.logos.map((logo, i) => (
+                  <div key={i} className="mt-2">
+                    <h3 className="font-semibold text-[18px] mb-[5px]">Logo {i + 1}:</h3>
+                    <img
+                      src={`${baseURL}/images/services/${logo}`}
+                      alt={`logo-${i}`}
+                      className="w-full h-[100px] object-contain border"
+                    />
+                    <input
+                      type="file"
+                      onChange={(e) =>
+                        handleDynamicImageUpload(e, `serviceLogos.logos.${i}`, selectedName)
+                      }
+                    />
+                  </div>
+                ))}
+              </div>
             </div>
 
             {/* serviceContact Section */}
@@ -1571,7 +1699,7 @@ const EditServicePage = () => {
                 onChange={(e) => handleChange("serviceContact.btnText", e.target.value)}
                 placeholder="Button Text"
               />
-              <button
+              <button type="button"
                 className="bg-[#18185E] text-white px-4 py-2 rounded mt-[20px]"
                 onClick={handleSave}
               >
