@@ -84,6 +84,7 @@ interface ServiceOfferingCard {
   heading: string;
   des: string;
   btnText: string;
+  link?: string;
 }
 
 interface ServiceOfferingData {
@@ -119,8 +120,10 @@ interface ServiceIndustriesItem {
 }
 
 interface ServiceIndustriesData {
+  mainImage: string;
+  btnText: string;
   title: string;
-  letters: string[];
+  des: string;
   industries: ServiceIndustriesItem[];
 }
 
@@ -216,7 +219,7 @@ const EditServicePage = () => {
   const handleSave = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     const scrollPosition = window.scrollY;
-    
+
     try {
       setLoading(true);
       await axios.put(`${baseURL}/service`, {
@@ -251,81 +254,6 @@ const EditServicePage = () => {
     setData(newData);
     setLoading(false);
   };
-  // const handleDynamicImageUpload = async (
-  //   e: React.ChangeEvent<HTMLInputElement>,
-  //   imageKey: string,
-  //   selectedName: string
-  // ): Promise<void> => {
-  //   const file = e.target.files?.[0];
-  //   if (!file || !selectedName) return;
-  //   const formData = new FormData();
-  //   formData.append("image", file);
-  //   formData.append("imageKey", imageKey);
-  //   formData.append("name", selectedName);
-
-  //   try {
-  //     setLoading(true);
-  //     const res = await fetch(`${baseURL}/upload-service-image`, {
-  //       method: "POST",
-  //       body: formData,
-  //     });
-
-  //     const result: { message?: string; path?: string; error?: string } =
-  //       await res.json();
-
-  //     if (res.ok && result.path) {
-  //       setLoading(false);
-  //       // ✅ Reflect the image update instantly in UI
-  //       handleChange(imageKey, result.path);
-  //     } else {
-  //       alert(result.error || "Unknown error occurred during image upload.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Upload failed:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-  //   const handleDynamicImageUpload = async (
-  //   e: React.ChangeEvent<HTMLInputElement>,
-  //   imageKey: string,
-  //   selectedName: string
-  // ): Promise<void> => {
-  //   const file = e.target.files?.[0];
-  //   if (!file || !selectedName) return;
-
-  //   // Save current scroll position
-  //   const scrollPosition = window.scrollY;
-
-  //   const formData = new FormData();
-  //   formData.append("image", file);
-  //   formData.append("imageKey", imageKey);
-  //   formData.append("name", selectedName);
-
-  //   try {
-  //     setLoading(true);
-  //     const res = await fetch(`${baseURL}/upload-service-image`, {
-  //       method: "POST",
-  //       body: formData,
-  //     });
-
-  //     const result: { message?: string; path?: string; error?: string } = await res.json();
-
-  //     if (res.ok && result.path) {
-  //       // Update the image path in the state
-  //       handleChange(imageKey, result.path);
-  //     } else {
-  //       alert(result.error || "Unknown error occurred during image upload.");
-  //     }
-  //   } catch (error) {
-  //     console.error("Upload failed:", error);
-  //     alert("Image upload failed.");
-  //   } finally {
-  //     setLoading(false);
-  //     // Restore scroll position after state update
-  //     window.scrollTo(0, scrollPosition);
-  //   }
-  // };
   const handleDynamicImageUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
     imageKey: string,
@@ -1010,12 +938,15 @@ const EditServicePage = () => {
                     alt={`offering-icon-${i}`}
                     className="w-[50px] h-[50px] object-contain"
                   />
+
                   <input
                     type="file"
                     onChange={(e) =>
                       handleDynamicImageUpload(e, `serviceOffering.cards.${i}.icon`, selectedName)
                     }
                   />
+
+                  {/* Heading */}
                   <input
                     className="w-full p-2 border rounded"
                     value={card.heading}
@@ -1026,6 +957,8 @@ const EditServicePage = () => {
                     }}
                     placeholder="Card Heading"
                   />
+
+                  {/* Description */}
                   <textarea
                     className="w-full p-2 border rounded"
                     value={card.des}
@@ -1036,6 +969,47 @@ const EditServicePage = () => {
                     }}
                     placeholder="Card Description"
                   />
+
+                  {/* Link Handling */}
+                  {card.link !== undefined ? (
+                    <div className="flex gap-2">
+                      <input
+                        className="w-full p-2 border rounded"
+                        value={card.link}
+                        onChange={(e) => {
+                          const cards = [...data.serviceOffering.cards];
+                          cards[i].link = e.target.value;
+                          handleChange("serviceOffering.cards", cards);
+                        }}
+                        placeholder="Card Link"
+                      />
+                      <button
+                        type="button"
+                        className="bg text-white px-4 py-2  rounded"
+                        onClick={() => {
+                          const cards = [...data.serviceOffering.cards];
+                          delete cards[i].link; // remove link property
+                          handleChange("serviceOffering.cards", cards);
+                        }}
+                      >
+                        Remove
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      className="bg  text-white px-4 py-2 rounded"
+                      onClick={() => {
+                        const cards = [...data.serviceOffering.cards];
+                        cards[i].link = ""; // add link inline
+                        handleChange("serviceOffering.cards", cards);
+                      }}
+                    >
+                      + Add Link
+                    </button>
+                  )}
+
+                  {/* Button Text */}
                   <input
                     className="w-full p-2 border rounded"
                     value={card.btnText}
@@ -1046,15 +1020,18 @@ const EditServicePage = () => {
                     }}
                     placeholder="Button Text"
                   />
-                  <button type="button"
+
+                  <button
+                    type="button"
                     className="bg-[#18185E] text-white px-4 py-2 rounded mt-[20px]"
                     onClick={handleSave}
                   >
                     Save All Changes
                   </button>
                 </div>
-
               ))}
+
+
 
             </div>
             {/* serviceBanner Section */}
@@ -1217,71 +1194,68 @@ const EditServicePage = () => {
             </div>
 
             {/* serviceIndustries Section */}
+            {/* ---------- Industries Section (updated) ---------- */}
             <div className="border p-2 rounded-[10px] shadow-xl">
               <h2 className="text-[25px] font-semibold my-[10px]">Industries Section</h2>
+
+              {/* Main Image */}
+              <h3 className="font-semibold text-[18px] mb-[5px]">Main Image:</h3>
+              {data.serviceIndustries?.mainImage && (
+                <img
+                  src={`${baseURL}/images/services/${data.serviceIndustries.mainImage}`}
+                  alt="main-image"
+                  className="w-[80%] md:w-[50%] lg:w-[30%] h-auto object-contain mb-2 bg-blue-200"
+                />
+              )}
+              <input
+                type="file"
+                onChange={(e) => handleDynamicImageUpload(e, "serviceIndustries.mainImage", selectedName)}
+                className="mb-4"
+              />
 
               {/* Title */}
               <h3 className="font-semibold text-[18px] mb-[5px]">Title:</h3>
               <input
-                className="w-full p-2 border rounded"
-                value={data.serviceIndustries.title}
+                className="w-full p-2 border rounded mb-3"
+                value={data.serviceIndustries?.title || ""}
                 onChange={(e) => handleChange("serviceIndustries.title", e.target.value)}
                 placeholder="Industries Title"
               />
 
-              {/* Letters */}
-              <h3 className="font-semibold text-[18px] mt-[10px] mb-[5px]">Letters to Change Color in Title:</h3>
-              <div className="grid grid-cols-2 md:grid-cols-5 gap-[5px]">
-                {data.serviceIndustries.letters.map((letter, i) => (
-                  <div key={i} className="flex items-center gap-2 mt-2">
-                    <input
-                      className="w-full p-2 border rounded"
-                      value={letter}
-                      onChange={(e) => {
-                        const letters = [...data.serviceIndustries.letters];
-                        letters[i] = e.target.value;
-                        handleChange("serviceIndustries.letters", letters);
-                      }}
-                      placeholder={`Letter ${i + 1}`}
-                    />
-                    <button type="button"
-                      className="bg-[#18185E] text-white px-2 py-1 rounded"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        const newLetters = data.serviceIndustries.letters.filter((_, index) => index !== i);
-                        handleChange("serviceIndustries.letters", newLetters);
-                      }}
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-              </div>
-              <button type="button"
-                className="bg-[#18185E] text-white px-4 py-2 rounded mt-[10px] mr-[5px]"
-                onClick={(e) => {
-                  e.preventDefault();
-                  const newLetters = [...data.serviceIndustries.letters, ""];
-                  handleChange("serviceIndustries.letters", newLetters);
-                }}
-              >
-                Add Letter
-              </button>
+              {/* Description */}
+              <h3 className="font-semibold text-[18px] mb-[5px]">Description:</h3>
+              <textarea
+                className="w-full p-2 border rounded mb-4"
+                value={data.serviceIndustries?.des || ""}
+                onChange={(e) => handleChange("serviceIndustries.des", e.target.value)}
+                placeholder="Section description"
+              />
 
-              {/* Industries */}
+              {/* Button Text (top small button) */}
+              <h3 className="font-semibold text-[18px] mb-[5px]">Button Text:</h3>
+              <input
+                className="w-full p-2 border rounded mb-3"
+                value={data.serviceIndustries?.btnText || ""}
+                onChange={(e) => handleChange("serviceIndustries.btnText", e.target.value)}
+                placeholder="Small button text (e.g. Industries We Support)"
+              />
+
+              {/* Industries list */}
               <h3 className="font-semibold text-[18px] mt-[20px] mb-[5px]">Industries :</h3>
-              {data.serviceIndustries.industries.map((industry, i) => (
+              {(data.serviceIndustries?.industries || []).map((industry: any, i: number) => (
                 <div key={i} className="mt-4 space-y-2 border p-2 rounded-[5px]">
                   <h3 className="font-semibold text-[18px]">Industry {i + 1}:</h3>
 
+                  {/* preview */}
                   {industry.image && (
                     <img
                       src={`${baseURL}/images/services/${industry.image}`}
                       alt={`industry-image-${i}`}
-                      className="w-[80%] md:w-[50%] lg:w-[20%] h-[200px] object-contain "
+                      className="w-[80%] md:w-[50%] lg:w-[20%] h-[200px] object-contain mb-2"
                     />
                   )}
 
+                  {/* image upload */}
                   <input
                     type="file"
                     onChange={(e) =>
@@ -1289,51 +1263,57 @@ const EditServicePage = () => {
                     }
                   />
 
+                  {/* title */}
                   <input
                     className="w-full p-2 border rounded"
                     value={industry.title}
                     onChange={(e) => {
-                      const industries = [...data.serviceIndustries.industries];
+                      const industries = [...(data.serviceIndustries?.industries || [])];
                       industries[i].title = e.target.value;
                       handleChange("serviceIndustries.industries", industries);
                     }}
                     placeholder="Industry Title"
                   />
 
+                  {/* description */}
                   <textarea
                     className="w-full p-2 border rounded"
                     value={industry.des}
                     onChange={(e) => {
-                      const industries = [...data.serviceIndustries.industries];
+                      const industries = [...(data.serviceIndustries?.industries || [])];
                       industries[i].des = e.target.value;
                       handleChange("serviceIndustries.industries", industries);
                     }}
                     placeholder="Industry Description"
                   />
 
+                  {/* button text */}
                   <input
                     className="w-full p-2 border rounded"
                     value={industry.btnText}
                     onChange={(e) => {
-                      const industries = [...data.serviceIndustries.industries];
+                      const industries = [...(data.serviceIndustries?.industries || [])];
                       industries[i].btnText = e.target.value;
                       handleChange("serviceIndustries.industries", industries);
                     }}
                     placeholder="Button Text"
                   />
 
-                  <div className="flex gap-2">
-                    <button type="button"
+                  <div className="flex gap-2 mt-2">
+                    <button
+                      type="button"
                       className="bg-[#18185E] text-white px-4 py-2 rounded"
                       onClick={handleSave}
                     >
                       Save Changes
                     </button>
-                    <button type="button"
+
+                    <button
+                      type="button"
                       className="bg-[#18185E] text-white px-4 py-2 rounded"
                       onClick={(e) => {
                         e.preventDefault();
-                        const newIndustries = data.serviceIndustries.industries.filter((_, index) => index !== i);
+                        const newIndustries = (data.serviceIndustries?.industries || []).filter((_, index) => index !== i);
                         handleChange("serviceIndustries.industries", newIndustries);
                       }}
                     >
@@ -1343,29 +1323,28 @@ const EditServicePage = () => {
                 </div>
               ))}
 
-              <button type="button"
+              <button
+                type="button"
                 className="bg-[#18185E] text-white px-4 py-2 rounded mt-[20px] mr-[5px]"
                 onClick={(e) => {
                   e.preventDefault();
-                  const newIndustry = {
-                    image: "",
-                    title: "",
-                    des: "",
-                    btnText: "Read more",
-                  };
-                  const newIndustries = [...data.serviceIndustries.industries, newIndustry];
+                  const newIndustry = { image: "", title: "", des: "", btnText: "Read More" };
+                  const newIndustries = [...(data.serviceIndustries?.industries || []), newIndustry];
                   handleChange("serviceIndustries.industries", newIndustries);
                 }}
               >
                 Add Industry
               </button>
-              <button type="button"
-                className="bg-[#18185E] text-white px-4 py-2 rounded"
+
+              <button
+                type="button"
+                className="bg-[#18185E] text-white px-4 py-2 rounded ml-2"
                 onClick={handleSave}
               >
                 Save All Changes
               </button>
             </div>
+
 
             {/* serviceClient Section */}
             <div className="border p-2 rounded-[10px] shadow-xl">

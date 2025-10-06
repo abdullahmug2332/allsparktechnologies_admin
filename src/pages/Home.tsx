@@ -45,10 +45,19 @@ interface AboutData {
   features: AboutFeature[];
 }
 
-interface ProcessStep {
-  number: string;
+export interface ProcessStep {
+  image: string;
+  heading: string;
+  des: string;
+  dir?: string; // optional because the last step doesn’t have `dir`
+}
+
+export interface ProcessSection {
   title: string;
-  description: string;
+  des: string;
+  image: string;
+  link: string;
+  process: ProcessStep[];
 }
 
 interface FAQItem {
@@ -93,7 +102,7 @@ interface HomeData {
   logos: logo[];
   homeServices: HomeServices;
   about: AboutData;
-  process: ProcessStep[];
+  process: ProcessSection;
   faq: FAQData;
   contactBanner: ContactBanner;
   testimonials: TestimonialsData;
@@ -145,7 +154,7 @@ const EditHomeData: React.FC = () => {
     e: React.ChangeEvent<HTMLInputElement>,
     imageKey: string
   ) => {
-    const file = e.target.files?.[0]; 
+    const file = e.target.files?.[0];
     if (!file) return;
 
 
@@ -675,47 +684,210 @@ const EditHomeData: React.FC = () => {
           </div>
 
           {/* Process Section */}
+      <div className="border p-4 rounded-[10px] shadow-xl">
+        <h1 className="color text-[32px] font-semibold my-[10px]">
+          Process Section
+        </h1>
+        <section className="space-y-6">
           <div>
-            <h1 className="color text-[32px] font-semibold my-[10px]">
-              Process Section
-            </h1>
-            <section className="space-y-6">
-              {data.process.map((step, i) => (
-                <div key={i} className="space-y-1 my-[10px]">
-                  <h2 className="text-[18px] font-semibold">
-                    Process {i + 1}:
-                  </h2>
-                  <input
-                    className="block w-full p-2  border"
-                    type="text"
-                    placeholder="Step Number"
-                    value={step.title}
-                    onChange={(e) => {
-                      const steps = [...data.process];
-                      steps[i].title = e.target.value;
-                      setData({ ...data, process: steps });
-                    }}
+            <h2 className="text-[18px] font-semibold">Section Title:</h2>
+            <input
+              className="block w-full my-2 p-2 border rounded"
+              type="text"
+              placeholder="Process Title"
+              value={data.process.title}
+              onChange={(e) =>
+                setData({
+                  ...data,
+                  process: { ...data.process, title: e.target.value },
+                })
+              }
+            />
+          </div>
+          <div>
+            <h2 className="text-[18px] font-semibold">Section Description:</h2>
+            <textarea
+              className="block w-full my-2 p-2 border rounded"
+              placeholder="Process Description"
+              value={data.process.des}
+              onChange={(e) =>
+                setData({
+                  ...data,
+                  process: { ...data.process, des: e.target.value },
+                })
+              }
+            />
+          </div>
+          <div>
+            <h2 className="text-[18px] font-semibold">Section Image:</h2>
+            <img
+              src={`${baseURL}/images/home/${data.process.image}`}
+              alt="section-img"
+              className="w-[150px] h-[100px] object-contain my-2"
+            />
+            <input
+              type="file"
+              onChange={(e) => handleDynamicImageUpload(e, "process.image")}
+            />
+          </div>
+          <div>
+            <h2 className="text-[18px] font-semibold">Section Link:</h2>
+            <input
+              className="block w-full my-2 p-2 border rounded"
+              type="text"
+              placeholder="Process Link"
+              value={data.process.link}
+              onChange={(e) =>
+                setData({
+                  ...data,
+                  process: { ...data.process, link: e.target.value },
+                })
+              }
+            />
+          </div>
+          <div className="space-y-4">
+            <h2 className="text-[18px] font-semibold">Process Steps:</h2>
+            {data.process.process.map((proc, i) => (
+              <div key={i} className="border p-3 rounded-md space-y-2">
+                <h3 className="text-[18px] font-semibold">Step {i + 1}:</h3>
+                <div>
+                  <img
+                    src={`${baseURL}/images/home/${proc.image}`}
+                    alt={`process-image-${i}`}
+                    className="w-[100px] h-[100px] object-contain my-2"
                   />
-                  <textarea
-                    className="block w-full p-2 border "
-                    placeholder="Description "
-                    value={step.description}
-                    onChange={(e) => {
-                      const steps = [...data.process];
-                      steps[i].description = e.target.value;
-                      setData({ ...data, process: steps });
-                    }}
+                  <input
+                    type="file"
+                    onChange={(e) =>
+                      handleDynamicImageUpload(e, `process.process[${i}].image`)
+                    }
                   />
                 </div>
-              ))}
-            </section>
+                <input
+                  className="block w-full p-2 border rounded"
+                  type="text"
+                  placeholder="Step Heading"
+                  value={proc.heading}
+                  onChange={(e) => {
+                    const updatedSteps = [...data.process.process];
+                    updatedSteps[i].heading = e.target.value;
+                    setData({
+                      ...data,
+                      process: { ...data.process, process: updatedSteps },
+                    });
+                  }}
+                />
+                <textarea
+                  className="block w-full p-2 border rounded"
+                  placeholder="Step Description"
+                  value={proc.des}
+                  onChange={(e) => {
+                    const updatedSteps = [...data.process.process];
+                    updatedSteps[i].des = e.target.value;
+                    setData({
+                      ...data,
+                      process: { ...data.process, process: updatedSteps },
+                    });
+                  }}
+                />
+                <div>
+                  {proc.dir ? (
+                    <div className="space-y-2">
+                      <img
+                        src={`${baseURL}/images/home/${proc.dir}`}
+                        alt={`process-dir-${i}`}
+                        className="w-[50px] h-[50px] object-contain bg-slate-100 my-2"
+                      />
+                      <button
+                        className="bg text-white px-3 py-1 rounded mr-2"
+                        onClick={() => {
+                          const updatedSteps = [...data.process.process];
+                          updatedSteps[i].dir = "";
+                          setData({
+                            ...data,
+                            process: { ...data.process, process: updatedSteps },
+                          });
+                        }}
+                      >
+                        Remove Direction Icon
+                      </button>
+                      <input
+                        type="file"
+                        onChange={(e) =>
+                          handleDynamicImageUpload(e, `process.process[${i}].dir`)
+                        }
+                      />
+                    </div>
+                  ) : (
+                    <button
+                      className="bg-[#18185E] text-white px-4 py-2  rounded"
+                      onClick={() => {
+                        const updatedSteps = [...data.process.process];
+                        updatedSteps[i].dir = "";
+                        setData({
+                          ...data,
+                          process: { ...data.process, process: updatedSteps },
+                        });
+                      }}
+                    >
+                      Add Direction Icon
+                    </button>
+                  )}
+                </div>
+                <button
+                  className="bg text-white px-4 py-2  rounded mr-[5px]"
+                  onClick={() => {
+                    const updatedSteps = data.process.process.filter(
+                      (_, index) => index !== i
+                    );
+                    setData({
+                      ...data,
+                      process: { ...data.process, process: updatedSteps },
+                    });
+                  }}
+                >
+                  Remove Step
+                </button>
+                <button
+              className="bg text-white px-4 py-2 rounded "
+              onClick={handleSave}
+            >
+              Save Changes
+            </button>
+              </div>
+            ))}
+          </div>
+          <div className="flex gap-2">
             <button
-              className="bg text-white px-4 py-2 rounded mt-1"
+              className="bg-[#18185E] text-white px-4 py-2 rounded"
+              onClick={() => {
+                const newStep: ProcessStep = {
+                  image: "",
+                  heading: "",
+                  des: "",
+                  dir: "",
+                };
+                setData({
+                  ...data,
+                  process: {
+                    ...data.process,
+                    process: [...data.process.process, newStep],
+                  },
+                });
+              }}
+            >
+              Add Step
+            </button>
+            <button
+              className="bg text-white px-4 py-2 rounded"
               onClick={handleSave}
             >
               Save Changes
             </button>
           </div>
+        </section>
+      </div>
+
 
           {/* FAQ Section */}
           <section className="space-y-6">
