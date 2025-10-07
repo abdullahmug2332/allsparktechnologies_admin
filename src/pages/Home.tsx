@@ -4,115 +4,100 @@ import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 import { baseURL } from "../../API/baseURL";
 import Loader from "../components/Loader";
+export interface HomePageData {
+  hero: {
+    bg: string;
+    topBtn: string;
+    topBtnLink: string;
+    title: string;
+    des: string;
+    bottomBtn: string;
+    bottomBtnLink: string;
+  }[];
+  logos: {
+    id: number;
+    src: string;
+    alt: string;
+  }[];
+  homeServices: {
+    subTitle: string;
+    title: string;
+    allServices: {
+      id: string;
+      title: string;
+      imageUrl: string;
+      alt: string;
+    }[];
+  };
+  about: {
+    img1: string;
+    img2: string;
+    img3: string;
+    alt1: string;
+    alt2: string;
+    alt3: string;
+    subheading: string;
+    mainHeading: string;
+    paragraphs: string[];
+    features: {
+      title: string;
+      subtitle: string;
+    }[];
+  };
+  titles: string[];
+  process: {
+    title: string;
+    des: string;
+    image: string;
+    link: string;
+    process: {
+      heading: string;
+      des: string;
+      image: string;
+      dir?: string;
+    }[];
+  };
 
-interface HeroData {
-  texts: string[];
-  features: string[];
-}
-interface logo {
-  id: number;
-  src: string;
-  alt: string;
-}
-interface HomeService {
-  id: string;
-  title: string;
-  imageUrl: string;
-}
-
-interface HomeServices {
-  subTitle: string;
-  title: string;
-  allServices: HomeService[];
-}
-
-interface AboutFeature {
-  title: string;
-  subtitle: string;
-}
-
-interface AboutData {
-  img1: string;
-  img2: string;
-  img3: string;
-  alt1: string;
-  alt2: string;
-  alt3: string;
-  alt4: string;
-  subheading: string;
-  mainHeading: string;
-  paragraphs: string[];
-  features: AboutFeature[];
-}
-
-export interface ProcessStep {
-  image: string;
-  heading: string;
-  des: string;
-  dir?: string; // optional because the last step doesn’t have `dir`
-}
-
-export interface ProcessSection {
-  title: string;
-  des: string;
-  image: string;
-  link: string;
-  process: ProcessStep[];
-}
-
-interface FAQItem {
-  question: string;
-  answer: string;
-}
-
-interface FAQData {
-  img1: string;
-  img2: string;
-  img3: string;
-  alt1: string;
-  alt2: string;
-  alt3: string;
-  subtitle: string;
-  title: string;
-  faqs: FAQItem[];
-}
-interface ContactBanner {
-  img: string;
-  alt: string;
-  subTitle: string;
-  title: string;
-}
-interface TestimonialItem {
-  id: number;
-  name: string;
-  role: string;
-  text: string;
-  image: string;
-  rating: number;
-}
-
-interface TestimonialsData {
-  title: string;
-  subtitle: string;
-  testimonials: TestimonialItem[];
+  faq: {
+    img1: string;
+    img2: string;
+    img3: string;
+    alt1: string;
+    alt2: string;
+    alt3: string;
+    subtitle: string;
+    title: string;
+    faqs: {
+      question: string;
+      answer: string;
+    }[];
+  };
+  contactBanner: {
+    img: string;
+    alt: string;
+    subTitle: string;
+    title: string;
+  };
+  testimonials: {
+    title: string;
+    subtitle: string;
+    testimonials: {
+      id: number;
+      name: string;
+      role: string;
+      text: string;
+      image: string;
+      rating: number;
+    }[];
+  };
+  metadata: any;
+  script: any;
 }
 
-interface HomeData {
-  hero: HeroData;
-  logos: logo[];
-  homeServices: HomeServices;
-  about: AboutData;
-  process: ProcessSection;
-  faq: FAQData;
-  contactBanner: ContactBanner;
-  testimonials: TestimonialsData;
-  metadata?: any; // optional JSON metadata
-  script?: any;
-}
 
 const EditHomeData: React.FC = () => {
   const [isLoading, setIsLoading] = useState(true);
-  const [data, setData] = useState<HomeData | null>(null);
+  const [data, setData] = useState<HomePageData | null>(null);
   const toggle = useSelector((state: RootState) => state.toggle.value);
   const [metadataText, setMetadataText] = useState("");
   const [scriptText, setScriptText] = useState("");
@@ -157,8 +142,6 @@ const EditHomeData: React.FC = () => {
     const file = e.target.files?.[0];
     if (!file) return;
 
-
-
     const formData = new FormData();
     formData.append("image", file);
     formData.append("imageKey", imageKey); // e.g., 'logos[0].src'
@@ -185,8 +168,6 @@ const EditHomeData: React.FC = () => {
 
         return newData;
       });
-
-      setIsLoading(false);
     } catch (err) {
       console.error(err);
       alert(`Failed to upload image for ${imageKey}`);
@@ -210,108 +191,127 @@ const EditHomeData: React.FC = () => {
       >
         {isLoading && <Loader />}
 
-        <h1 className="color text-[32px] font-semibold my-[10px]">
-          Hero Section
-        </h1>
 
         <div className="space-y-8">
           <div>
             {/* Hero Section */}
             <section>
-              <h2 className="color text-[18px] font-semibold">
-                Hero Headings:
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-1 gap-y-0">
-                {data.hero.texts.map((text, index) => (
-                  <input
-                    key={index}
-                    className="block w-full my-1 p-2 border"
-                    placeholder="Hero Title"
-                    value={text}
-                    onChange={(e) => {
-                      const newTexts = [...data.hero.texts];
-                      newTexts[index] = e.target.value;
-                      setData({
-                        ...data,
-                        hero: { ...data.hero, texts: newTexts },
-                      });
-                    }}
-                  />
-                ))}
-              </div>
-              <h2 className="color text-[18px] font-semibold">
-                Hero Subheadings:
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-1 gap-y-0">
-                {data.hero.features.map((feature, index) => (
-                  <input
-                    key={index}
-                    className="block w-full my-1 p-2 border"
-                    placeholder="Hero Feature"
-                    value={feature}
-                    onChange={(e) => {
-                      const newFeatures = [...data.hero.features];
-                      newFeatures[index] = e.target.value;
-                      setData({
-                        ...data,
-                        hero: { ...data.hero, features: newFeatures },
-                      });
-                    }}
-                  />
-                ))}
-              </div>
-              <button
-                className="bg text-white px-4 py-2 rounded mt-1"
-                onClick={handleSave}
-              >
-                Save Changes
-              </button>
-            </section>
-          </div>
-
-          {/* Companies Logos */}
-          <div>
-            <section>
-              <h2 className="color text-[32px] font-semibold">
-                Companies Logos:
-              </h2>
-              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-[10px] my-[10px]">
-                {data?.logos?.map((logo, index) => (
-                  <div
-                    key={index}
-                    className="my-[30px] flex flex-col gap-[10px]"
-                  >
-                    <h2 className="color text-[18px] font-semibold">
-                      Logo {index + 1}:
-                    </h2>
+              <h2 className="color text-[32px] font-semibold">Hero Section</h2>
+              {data.hero.map((hero, index) => (
+                <div key={index} className="border p-4 rounded-md my-2 space-y-2 relative">
+                  <h3 className="text-[18px] font-semibold">Hero {index + 1}</h3>
+                  {/* Background Image */}
+                  <div>
                     <img
-                      src={`${baseURL}/images/home/${logo.src}`}
-                      className="max-h-[50px] object-cover"
+                      src={`${baseURL}/images/home/${hero.bg}`}
+                      className="h-[200px] object-cover"
                     />
                     <input
                       type="file"
-                      onChange={(e) =>
-                        handleDynamicImageUpload(e, `logos[${index}].src`)
-                      }
-                    />
-                    <input
-                      type="text"
-                      value={logo.alt}
-                      placeholder="Alt Text"
-                      onChange={(e) => {
-                        const updatedLogos = [...data.logos];
-                        updatedLogos[index] = {
-                          ...updatedLogos[index],
-                          alt: e.target.value,
-                        };
-                        setData({ ...data, logos: updatedLogos });
-                      }}
+                      onChange={(e) => handleDynamicImageUpload(e, `hero[${index}].bg`)}
+
                     />
                   </div>
-                ))}
-              </div>
+                  {/* Top Button */}
+                  <input
+                    className="block w-full p-2 border"
+                    placeholder="Top Button Text"
+                    value={hero.topBtn}
+                    onChange={(e) => {
+                      const newHero = [...data.hero];
+                      newHero[index].topBtn = e.target.value;
+                      setData({ ...data, hero: newHero });
+                    }}
+                  />
+                  <input
+                    className="block w-full p-2 border"
+                    placeholder="Top Button Link"
+                    value={hero.topBtnLink}
+                    onChange={(e) => {
+                      const newHero = [...data.hero];
+                      newHero[index].topBtnLink = e.target.value;
+                      setData({ ...data, hero: newHero });
+                    }}
+                  />
+                  {/* Title */}
+                  <input
+                    className="block w-full p-2 border"
+                    placeholder="Title"
+                    value={hero.title}
+                    onChange={(e) => {
+                      const newHero = [...data.hero];
+                      newHero[index].title = e.target.value;
+                      setData({ ...data, hero: newHero });
+                    }}
+                  />
+                  {/* Description */}
+                  <textarea
+                    className="block w-full p-2 border"
+                    placeholder="Description"
+                    value={hero.des}
+                    onChange={(e) => {
+                      const newHero = [...data.hero];
+                      newHero[index].des = e.target.value;
+                      setData({ ...data, hero: newHero });
+                    }}
+                  />
+                  {/* Bottom Button */}
+                  <input
+                    className="block w-full p-2 border"
+                    placeholder="Bottom Button Text"
+                    value={hero.bottomBtn}
+                    onChange={(e) => {
+                      const newHero = [...data.hero];
+                      newHero[index].bottomBtn = e.target.value;
+                      setData({ ...data, hero: newHero });
+                    }}
+                  />
+                  <input
+                    className="block w-full p-2 border"
+                    placeholder="Bottom Button Link"
+                    value={hero.bottomBtnLink}
+                    onChange={(e) => {
+                      const newHero = [...data.hero];
+                      newHero[index].bottomBtnLink = e.target.value;
+                      setData({ ...data, hero: newHero });
+                    }}
+                  />
+                  {/* Remove Hero */}
+                  <button
+                    className="absolute top-2 right-2 bg text-white px-3 py-1 rounded"
+                    onClick={() => {
+                      const newHero = data.hero.filter((_, i) => i !== index);
+                      setData({ ...data, hero: newHero });
+                    }}
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
               <button
-                className="bg text-white px-4 py-2 rounded mt-4"
+                className="bg text-white px-4 py-2 rounded"
+                onClick={() => {
+                  setData({
+                    ...data,
+                    hero: [
+                      ...data.hero,
+                      {
+                        bg: "",
+                        topBtn: "",
+                        topBtnLink: "",
+                        title: "",
+                        des: "",
+                        bottomBtn: "",
+                        bottomBtnLink: "",
+                      },
+                    ],
+                  });
+                }}
+              >
+                Add Hero
+              </button>
+              <button
+                className="bg text-white px-4 py-2 rounded ml-2"
                 onClick={handleSave}
               >
                 Save Changes
@@ -460,15 +460,13 @@ const EditHomeData: React.FC = () => {
                             id: "",
                             title: "",
                             imageUrl: "",
+                            alt: "",
                           };
                           setData({
                             ...data,
                             homeServices: {
                               ...data.homeServices,
-                              allServices: [
-                                ...data.homeServices.allServices,
-                                newService,
-                              ],
+                              allServices: [...data.homeServices.allServices, newService],
                             },
                           });
                         }}
@@ -683,210 +681,252 @@ const EditHomeData: React.FC = () => {
             </div>
           </div>
 
-          {/* Process Section */}
-      <div className="border p-4 rounded-[10px] shadow-xl">
-        <h1 className="color text-[32px] font-semibold my-[10px]">
-          Process Section
-        </h1>
-        <section className="space-y-6">
-          <div>
-            <h2 className="text-[18px] font-semibold">Section Title:</h2>
-            <input
-              className="block w-full my-2 p-2 border rounded"
-              type="text"
-              placeholder="Process Title"
-              value={data.process.title}
-              onChange={(e) =>
-                setData({
-                  ...data,
-                  process: { ...data.process, title: e.target.value },
-                })
-              }
-            />
-          </div>
-          <div>
-            <h2 className="text-[18px] font-semibold">Section Description:</h2>
-            <textarea
-              className="block w-full my-2 p-2 border rounded"
-              placeholder="Process Description"
-              value={data.process.des}
-              onChange={(e) =>
-                setData({
-                  ...data,
-                  process: { ...data.process, des: e.target.value },
-                })
-              }
-            />
-          </div>
-          <div>
-            <h2 className="text-[18px] font-semibold">Section Image:</h2>
-            <img
-              src={`${baseURL}/images/home/${data.process.image}`}
-              alt="section-img"
-              className="w-[150px] h-[100px] object-contain my-2"
-            />
-            <input
-              type="file"
-              onChange={(e) => handleDynamicImageUpload(e, "process.image")}
-            />
-          </div>
-          <div>
-            <h2 className="text-[18px] font-semibold">Section Link:</h2>
-            <input
-              className="block w-full my-2 p-2 border rounded"
-              type="text"
-              placeholder="Process Link"
-              value={data.process.link}
-              onChange={(e) =>
-                setData({
-                  ...data,
-                  process: { ...data.process, link: e.target.value },
-                })
-              }
-            />
-          </div>
-          <div className="space-y-4">
-            <h2 className="text-[18px] font-semibold">Process Steps:</h2>
-            {data.process.process.map((proc, i) => (
-              <div key={i} className="border p-3 rounded-md space-y-2">
-                <h3 className="text-[18px] font-semibold">Step {i + 1}:</h3>
-                <div>
-                  <img
-                    src={`${baseURL}/images/home/${proc.image}`}
-                    alt={`process-image-${i}`}
-                    className="w-[100px] h-[100px] object-contain my-2"
-                  />
-                  <input
-                    type="file"
-                    onChange={(e) =>
-                      handleDynamicImageUpload(e, `process.process[${i}].image`)
-                    }
-                  />
-                </div>
+          {/* Titles*/}
+          <section className="space-y-6">
+            <h1 className="color text-[32px] font-semibold my-[10px]">Titles Section</h1>
+            {data.titles.map((title, index) => (
+              <div key={index} className="flex gap-2 items-center">
                 <input
-                  className="block w-full p-2 border rounded"
+                  className="block w-full p-2 border"
+                  placeholder={`Title ${index + 1}`}
+                  value={title}
+                  onChange={(e) => {
+                    const newTitles = [...data.titles];
+                    newTitles[index] = e.target.value;
+                    setData({ ...data, titles: newTitles });
+                  }}
+                />
+                <button
+                  className="bg text-white px-3 py-1 rounded"
+                  onClick={() => {
+                    const newTitles = data.titles.filter((_, i) => i !== index);
+                    setData({ ...data, titles: newTitles });
+                  }}
+                >
+                  Remove
+                </button>
+              </div>
+            ))}
+            <button
+              className="bg text-white px-4 py-2 rounded"
+              onClick={() => {
+                setData({ ...data, titles: [...data.titles, ""] });
+              }}
+            >
+              Add Title
+            </button>
+            <button
+              className="bg text-white px-4 py-2 rounded ml-2"
+              onClick={handleSave}
+            >
+              Save Changes
+            </button>
+          </section>
+
+          {/* Process Section */}
+          <div className="border p-4 rounded-[10px] shadow-xl">
+            <h1 className="color text-[32px] font-semibold my-[10px]">
+              Process Section
+            </h1>
+            <section className="space-y-6">
+              <div>
+                <h2 className="text-[18px] font-semibold">Section Title:</h2>
+                <input
+                  className="block w-full my-2 p-2 border rounded"
                   type="text"
-                  placeholder="Step Heading"
-                  value={proc.heading}
-                  onChange={(e) => {
-                    const updatedSteps = [...data.process.process];
-                    updatedSteps[i].heading = e.target.value;
+                  placeholder="Process Title"
+                  value={data.process.title}
+                  onChange={(e) =>
                     setData({
                       ...data,
-                      process: { ...data.process, process: updatedSteps },
-                    });
-                  }}
+                      process: { ...data.process, title: e.target.value },
+                    })
+                  }
                 />
+              </div>
+              <div>
+                <h2 className="text-[18px] font-semibold">Section Description:</h2>
                 <textarea
-                  className="block w-full p-2 border rounded"
-                  placeholder="Step Description"
-                  value={proc.des}
-                  onChange={(e) => {
-                    const updatedSteps = [...data.process.process];
-                    updatedSteps[i].des = e.target.value;
+                  className="block w-full my-2 p-2 border rounded"
+                  placeholder="Process Description"
+                  value={data.process.des}
+                  onChange={(e) =>
                     setData({
                       ...data,
-                      process: { ...data.process, process: updatedSteps },
-                    });
-                  }}
+                      process: { ...data.process, des: e.target.value },
+                    })
+                  }
                 />
-                <div>
-                  {proc.dir ? (
-                    <div className="space-y-2">
+              </div>
+              <div>
+                <h2 className="text-[18px] font-semibold">Section Image:</h2>
+                <img
+                  src={`${baseURL}/images/home/${data.process.image}`}
+                  alt="section-img"
+                  className="w-[150px] h-[100px] object-contain my-2"
+                />
+                <input
+                  type="file"
+                  onChange={(e) => handleDynamicImageUpload(e, "process.image")}
+                />
+              </div>
+              <div>
+                <h2 className="text-[18px] font-semibold">Section Link:</h2>
+                <input
+                  className="block w-full my-2 p-2 border rounded"
+                  type="text"
+                  placeholder="Process Link"
+                  value={data.process.link}
+                  onChange={(e) =>
+                    setData({
+                      ...data,
+                      process: { ...data.process, link: e.target.value },
+                    })
+                  }
+                />
+              </div>
+              <div className="space-y-4">
+                <h2 className="text-[18px] font-semibold">Process Steps:</h2>
+                {data.process.process.map((proc, i) => (
+                  <div key={i} className="border p-3 rounded-md space-y-2">
+                    <h3 className="text-[18px] font-semibold">Step {i + 1}:</h3>
+                    <div>
                       <img
-                        src={`${baseURL}/images/home/${proc.dir}`}
-                        alt={`process-dir-${i}`}
-                        className="w-[50px] h-[50px] object-contain bg-slate-100 my-2"
+                        src={`${baseURL}/images/home/${proc.image}`}
+                        alt={`process-image-${i}`}
+                        className="w-[100px] h-[100px] object-contain my-2"
                       />
-                      <button
-                        className="bg text-white px-3 py-1 rounded mr-2"
-                        onClick={() => {
-                          const updatedSteps = [...data.process.process];
-                          updatedSteps[i].dir = "";
-                          setData({
-                            ...data,
-                            process: { ...data.process, process: updatedSteps },
-                          });
-                        }}
-                      >
-                        Remove Direction Icon
-                      </button>
                       <input
                         type="file"
                         onChange={(e) =>
-                          handleDynamicImageUpload(e, `process.process[${i}].dir`)
+                          handleDynamicImageUpload(e, `process.process[${i}].image`)
                         }
                       />
                     </div>
-                  ) : (
-                    <button
-                      className="bg-[#18185E] text-white px-4 py-2  rounded"
-                      onClick={() => {
+                    <input
+                      className="block w-full p-2 border rounded"
+                      type="text"
+                      placeholder="Step Heading"
+                      value={proc.heading}
+                      onChange={(e) => {
                         const updatedSteps = [...data.process.process];
-                        updatedSteps[i].dir = "";
+                        updatedSteps[i].heading = e.target.value;
+                        setData({
+                          ...data,
+                          process: { ...data.process, process: updatedSteps },
+                        });
+                      }}
+                    />
+                    <textarea
+                      className="block w-full p-2 border rounded"
+                      placeholder="Step Description"
+                      value={proc.des}
+                      onChange={(e) => {
+                        const updatedSteps = [...data.process.process];
+                        updatedSteps[i].des = e.target.value;
+                        setData({
+                          ...data,
+                          process: { ...data.process, process: updatedSteps },
+                        });
+                      }}
+                    />
+                    <div>
+                      {proc.dir ? (
+                        <div className="space-y-2">
+                          <img
+                            src={`${baseURL}/images/home/${proc.dir}`}
+                            alt={`process-dir-${i}`}
+                            className="w-[50px] h-[50px] object-contain bg-slate-100 my-2"
+                          />
+                          <button
+                            className="bg text-white px-3 py-1 rounded mr-2"
+                            onClick={() => {
+                              const updatedSteps = [...data.process.process];
+                              updatedSteps[i].dir = "";
+                              setData({
+                                ...data,
+                                process: { ...data.process, process: updatedSteps },
+                              });
+                            }}
+                          >
+                            Remove Direction Icon
+                          </button>
+                          <input
+                            type="file"
+                            onChange={(e) =>
+                              handleDynamicImageUpload(e, `process.process[${i}].dir`)
+                            }
+                          />
+                        </div>
+                      ) : (
+                        <button
+                          className="bg-[#18185E] text-white px-4 py-2  rounded"
+                          onClick={() => {
+                            const updatedSteps = [...data.process.process];
+                            updatedSteps[i].dir = "";
+                            setData({
+                              ...data,
+                              process: { ...data.process, process: updatedSteps },
+                            });
+                          }}
+                        >
+                          Add Direction Icon
+                        </button>
+                      )}
+                    </div>
+                    <button
+                      className="bg text-white px-4 py-2  rounded mr-[5px]"
+                      onClick={() => {
+                        const updatedSteps = data.process.process.filter(
+                          (_, index) => index !== i
+                        );
                         setData({
                           ...data,
                           process: { ...data.process, process: updatedSteps },
                         });
                       }}
                     >
-                      Add Direction Icon
+                      Remove Step
                     </button>
-                  )}
-                </div>
+                    <button
+                      className="bg text-white px-4 py-2 rounded "
+                      onClick={handleSave}
+                    >
+                      Save Changes
+                    </button>
+                  </div>
+                ))}
+              </div>
+              <div className="flex gap-2">
                 <button
-                  className="bg text-white px-4 py-2  rounded mr-[5px]"
+                  className="bg-[#18185E] text-white px-4 py-2 rounded"
                   onClick={() => {
-                    const updatedSteps = data.process.process.filter(
-                      (_, index) => index !== i
-                    );
+                    const newStep = {
+                      image: "",
+                      heading: "",
+                      des: "",
+                      dir: "",
+                    };
                     setData({
                       ...data,
-                      process: { ...data.process, process: updatedSteps },
+                      process: {
+                        ...data.process,
+                        process: [...data.process.process, newStep],
+                      },
                     });
                   }}
                 >
-                  Remove Step
+                  Add Step
                 </button>
                 <button
-              className="bg text-white px-4 py-2 rounded "
-              onClick={handleSave}
-            >
-              Save Changes
-            </button>
+                  className="bg text-white px-4 py-2 rounded"
+                  onClick={handleSave}
+                >
+                  Save Changes
+                </button>
               </div>
-            ))}
+            </section>
           </div>
-          <div className="flex gap-2">
-            <button
-              className="bg-[#18185E] text-white px-4 py-2 rounded"
-              onClick={() => {
-                const newStep: ProcessStep = {
-                  image: "",
-                  heading: "",
-                  des: "",
-                  dir: "",
-                };
-                setData({
-                  ...data,
-                  process: {
-                    ...data.process,
-                    process: [...data.process.process, newStep],
-                  },
-                });
-              }}
-            >
-              Add Step
-            </button>
-            <button
-              className="bg text-white px-4 py-2 rounded"
-              onClick={handleSave}
-            >
-              Save Changes
-            </button>
-          </div>
-        </section>
-      </div>
 
 
           {/* FAQ Section */}
@@ -1263,6 +1303,57 @@ const EditHomeData: React.FC = () => {
               Save Changes
             </button>
           </section>
+          
+          {/* Companies Logos */}
+          <div>
+            <section>
+              <h2 className="color text-[32px] font-semibold">
+                Companies Logos:
+              </h2>
+              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-[10px] my-[10px]">
+                {data?.logos?.map((logo, index) => (
+                  <div
+                    key={index}
+                    className="my-[30px] flex flex-col gap-[10px]"
+                  >
+                    <h2 className="color text-[18px] font-semibold">
+                      Logo {index + 1}:
+                    </h2>
+                    <img
+                      src={`${baseURL}/images/home/${logo.src}`}
+                      className="max-h-[50px] object-cover"
+                    />
+                    <input
+                      type="file"
+                      onChange={(e) =>
+                        handleDynamicImageUpload(e, `logos[${index}].src`)
+                      }
+                    />
+                    <input
+                      type="text"
+                      value={logo.alt}
+                      placeholder="Alt Text"
+                      onChange={(e) => {
+                        const updatedLogos = [...data.logos];
+                        updatedLogos[index] = {
+                          ...updatedLogos[index],
+                          alt: e.target.value,
+                        };
+                        setData({ ...data, logos: updatedLogos });
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+              <button
+                className="bg text-white px-4 py-2 rounded mt-4"
+                onClick={handleSave}
+              >
+                Save Changes
+              </button>
+            </section>
+          </div>
+
           {/* Metadata JSON */}
           <div>
             <h2 className="text-[18px] font-semibold mt-10">
