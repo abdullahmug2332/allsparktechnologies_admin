@@ -123,15 +123,15 @@ const SubServices: React.FC = () => {
     return faqs.map((faq, index) => ({ ...faq, item: `item-${index + 1}` }));
   };
 
+
   if (error) return <div>{error}</div>;
 
   return (
     <div
-      className={`${
-        toggle === false
+      className={`${toggle === false
           ? "w-full"
           : "md:w-[80%] lg:w-[82%] xl:w-[85%] 2xl:w-[87%]"
-      } duration-500 font-semibold ml-auto py-[20px] px-[10px] md:px-[30px] mt-[40px] p-6 space-y-6 relative`}
+        } duration-500 font-semibold ml-auto py-[20px] px-[10px] md:px-[30px] mt-[40px] p-6 space-y-6 relative`}
     >
       {(isFetching || isSaving) && <Loader />}
 

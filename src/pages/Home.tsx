@@ -211,6 +211,7 @@ const EditHomeData: React.FC = () => {
                       onChange={(e) => handleDynamicImageUpload(e, `hero[${index}].bg`)}
 
                     />
+                    <p className="text-[12px] underline">(First save then upload the image otherwise error)</p>
                   </div>
                   {/* Top Button */}
                   <input
@@ -430,7 +431,8 @@ const EditHomeData: React.FC = () => {
                             )
                           }
                         />
-
+                        <p className="text-[12px] underline">(First save then upload the image otherwise error)</p>
+                          
                         {/* Remove Button */}
                         <button
                           onClick={() => {
@@ -1303,7 +1305,7 @@ const EditHomeData: React.FC = () => {
               Save Changes
             </button>
           </section>
-          
+
           {/* Companies Logos */}
           <div>
             <section>
