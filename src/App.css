@@ -60,3 +60,111 @@ textarea{
 .border{
     border: 1px solid #9e9eaf;
 }
+
+.font{
+  font-family: "Rajdhani", sans-serif !important;
+
+}
+/* Heading (like h1/h2) */
+.heading {
+  @apply text-[30px] lg:text-[35px] 2xl:text-[40px]  ;
+  font-family: "Rajdhani", sans-serif !important;
+}
+/* Paragraph */
+.para {
+  @apply text-[14px] md:text-[15px] lg:text-[16px] ;
+}
+
+/* Subheading (like h3/h4) */
+.subheading {
+  @apply  text-[18px] md:text-[19px] lg:text-[21px] ;
+
+}
+
+.blogsdata ul {
+  list-style-type: disc;
+  /* bullets */
+  padding-left: 1.5rem;
+  /* indentation */
+  margin-bottom: 1rem;
+}
+
+
+ul {
+  list-style-type: disc;
+}
+
+ol {
+  list-style-type: decimal;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.h1 {
+  font-size: 32px;
+  margin-top: 15px;
+  margin-bottom: 10px;
+  font-weight: 900;
+}
+
+.h2 {
+  font-size: 24px;
+  margin-top: 14px;
+  margin-bottom: 8px;
+  font-weight: 800;
+
+}
+
+.h3 {
+  font-size: 20px;
+  font-weight: 700;
+  margin-top: 12px;
+  margin-bottom: 7px;
+
+}
+
+
+
+.ul,
+.ol {
+  margin-top: 12px;
+  margin-bottom: 7px;
+  font-weight: 700;
+
+}
+
+.strong {
+  margin-top: 9px;
+  margin-bottom: 5px;
+}
+
+.p {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.blogcontent img {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+
+.ql-align-right {
+  text-align: right;
+}
+
+.ql-align-center {
+  text-align: center;
+}
+
+.ql-align-justify {
+  text-align: justify;
+}
+
+.ql-align-left {
+  text-align: left;
+}
+
+
+.blogcontent {
+  width: 100%;
+}

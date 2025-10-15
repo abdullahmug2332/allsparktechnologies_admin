@@ -147,32 +147,7 @@ const EditBlogEditor = () => {
     }
   };
 
-  // Multiple Images (double/triple)
-  const handleMultipleImagesItemChange = async (files: FileList, idx: number, maxCount: number) => {
-    const selected = Array.from(files).slice(0, maxCount);
 
-    // 1) show local previews
-    const previews = selected.map((f) => URL.createObjectURL(f));
-    setItems((prev) => {
-      const copy = [...prev];
-      const type = maxCount === 2 ? "doubleimage" : "tripleimage";
-      copy[idx] = { ...(copy[idx] || {}), type, value: previews };
-      return copy;
-    });
-
-    // 2) upload -> replace with server filenames
-    const filenames: string[] = [];
-    for (const f of selected) {
-      const name = await uploadImage(f);
-      if (name) filenames.push(name);
-    }
-    setItems((prev) => {
-      const copy = [...prev];
-      const type = maxCount === 2 ? "doubleimage" : "tripleimage";
-      copy[idx] = { ...(copy[idx] || {}), type, value: filenames };
-      return copy;
-    });
-  };
 
   const handleUpdate = async () => {
     if (!title || !description || !urlName) {
@@ -369,12 +344,8 @@ const EditBlogEditor = () => {
                   updated[index].rows = [["Cell 1", "Cell 2"]];
                 } else if (newType === "singleimage") {
                   updated[index] = { type: "singleimage", value: "" };
-                } else if (newType === "doubleimage") {
-                  updated[index] = { type: "doubleimage", value: ["", ""] };
-                } else if (newType === "tripleimage") {
-                  updated[index] = { type: "tripleimage", value: ["", "", ""] };
-                }
-
+                } 
+                  
                 setItems(updated);
               }}
               className="border p-2 rounded w-full"
@@ -388,8 +359,7 @@ const EditBlogEditor = () => {
               <option value="ol">Ordered List</option>
               <option value="table">Table</option>
               <option value="singleimage">Single Image</option>
-              <option value="doubleimage">Double Image</option>
-              <option value="tripleimage">Triple Image</option>
+
             </select>
 
 
@@ -613,91 +583,7 @@ const EditBlogEditor = () => {
               </div>
             )}
 
-            {/* --- DOUBLE IMAGE --- */}
-            {item.type === "doubleimage" && (
-              <div>
-                <p className="text-sm text-gray-500 mb-1">Select up to 2 images</p>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={(e) => {
-                    const files = e.target.files;
-                    if (files) handleMultipleImagesItemChange(files, index, 2);
-                  }}
-                />
-
-                <div className="flex gap-2 mt-2 flex-wrap">
-                  {Array.isArray(item.value) &&
-                    item.value.map((img: string, idx: number) => (
-                      <div key={idx} className="relative">
-                        <img
-                          src={img.startsWith("blob:") ? img : `${baseURL}/images/blogs/${img}`}
-                          alt={`double-${idx}`}
-                          className="w-32 h-32 object-cover rounded"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const updated = [...items];
-                            const arr = Array.isArray(updated[index].value) ? [...updated[index].value] : [];
-                            updated[index].value = arr.filter((_: string, i: number) => i !== idx);
-                            setItems(updated);
-                          }}
-                          className="absolute top-1 right-1 bg-[#18185E] text-white px-2 py-[2px] rounded"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    ))}
-                </div>
-                <ReorderButtons index={index} items={items} setItems={setItems} />
-
-              </div>
-            )}
-
-            {/* --- TRIPLE IMAGE --- */}
-            {item.type === "tripleimage" && (
-              <div>
-                <p className="text-sm text-gray-500 mb-1">Select up to 3 images</p>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={(e) => {
-                    const files = e.target.files;
-                    if (files) handleMultipleImagesItemChange(files, index, 3);
-                  }}
-                />
-
-                <div className="flex gap-2 mt-2 flex-wrap">
-                  {Array.isArray(item.value) &&
-                    item.value.map((img: string, idx: number) => (
-                      <div key={idx} className="relative">
-                        <img
-                          src={img.startsWith("blob:") ? img : `${baseURL}/images/blogs/${img}`}
-                          alt={`triple-${idx}`}
-                          className="w-28 h-28 object-cover rounded"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => {
-                            const updated = [...items];
-                            const arr = Array.isArray(updated[index].value) ? [...updated[index].value] : [];
-                            updated[index].value = arr.filter((_: string, i: number) => i !== idx);
-                            setItems(updated);
-                          }}
-                          className="absolute top-1 right-1 bg-[#18185E] text-white px-2 py-[2px] rounded"
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    ))}
-                </div>
-                <ReorderButtons index={index} items={items} setItems={setItems} />
-
-              </div>
-            )}
+           
 
 
 

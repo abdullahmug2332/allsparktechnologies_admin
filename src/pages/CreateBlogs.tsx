@@ -72,17 +72,6 @@ const BlogEditor = () => {
     }
   };
 
-  // Multiple Images (double/triple)
-  const handleMultipleImagesChange = async (files: FileList, idx: number) => {
-    const filenames: string[] = [];
-    for (let i = 0; i < files.length; i++) {
-      const name = await uploadImage(files[i]);
-      if (name) filenames.push(name);
-    }
-    const copy = [...items];
-    (copy[idx] as any).value = filenames;
-    setItems(copy);
-  };
 
 
 
@@ -552,126 +541,11 @@ const BlogEditor = () => {
 
             )}
 
-            {/* Double Image */}
-            {item.type === "doubleimage" && (
-              <div>
-                <p>{"Double Image"}</p>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={(e) => {
-                    const files = e.target.files;
-                    if (files) {
-                      const previews = Array.from(files).map((file) =>
-                        URL.createObjectURL(file)
-                      );
-                      const copy = [...items];
-                      (copy[i] as any).value = previews; // show previews
-                      setItems(copy);
-
-                      handleMultipleImagesChange(files, i); // upload
-                    }
-                  }}
-                />
-                <div className="flex gap-2 mt-2">
-                  {/* Move Up */}
-                  {i > 0 && (
-                    <button
-                      type="button"
-                      className="bg-gray-200 text-sm px-2 py-1 rounded"
-                      onClick={() => setItems(swap(items, i, i - 1))}
-                    >
-                      ↑ Move Up
-                    </button>
-                  )}
-
-                  {/* Move Down */}
-                  {i < items.length - 1 && (
-                    <button
-                      type="button"
-                      className="bg-gray-200 text-sm px-2 py-1 rounded"
-                      onClick={() => setItems(swap(items, i, i + 1))}
-                    >
-                      ↓ Move Down
-                    </button>
-                  )}
-                </div>
-
-                <div className="flex gap-2 mt-2">
-                  {(item.value as string[]).map((img, idx) => (
-                    <img
-                      key={idx}
-                      src={img.startsWith("blob:") ? img : `${baseURL}/images/blogs/${img}`}
-                      alt="preview"
-                      className="w-32 h-32 object-cover rounded"
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
-
-            {/* Triple Image */}
-            {item.type === "tripleimage" && (
-              <div>
-                <p>{"Triple Image"}</p>
-                <input
-                  type="file"
-                  accept="image/*"
-                  multiple
-                  onChange={(e) => {
-                    const files = e.target.files;
-                    if (files) {
-                      const previews = Array.from(files).map((file) =>
-                        URL.createObjectURL(file)
-                      );
-                      const copy = [...items];
-                      (copy[i] as any).value = previews; // show previews
-                      setItems(copy);
-
-                      handleMultipleImagesChange(files, i); // upload
-                    }
-                  }}
-                />
-                <div className="flex gap-2 mt-2">
-                  {/* Move Up */}
-                  {i > 0 && (
-                    <button
-                      type="button"
-                      className="bg-gray-200 text-sm px-2 py-1 rounded"
-                      onClick={() => setItems(swap(items, i, i - 1))}
-                    >
-                      ↑ Move Up
-                    </button>
-                  )}
-
-                  {/* Move Down */}
-                  {i < items.length - 1 && (
-                    <button
-                      type="button"
-                      className="bg-gray-200 text-sm px-2 py-1 rounded"
-                      onClick={() => setItems(swap(items, i, i + 1))}
-                    >
-                      ↓ Move Down
-                    </button>
-                  )}
-                </div>
-                <div className="flex gap-2 mt-2">
-                  {(item.value as string[]).map((img, idx) => (
-                    <img
-                      key={idx}
-                      src={img.startsWith("blob:") ? img : `${baseURL}/images/blogs/${img}`}
-                      alt="preview"
-                      className="w-28 h-28 object-cover rounded"
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
+            
 
 
-            {/* Remove Button */}
-            <button
+            
+            <button //remove btn
               type="button"
               className="text-red-600 text-sm mt-2"
               onClick={() => setItems(items.filter((_, idx) => idx !== i))}
@@ -703,17 +577,15 @@ const BlogEditor = () => {
           ))}
         </div>
 
-        {/* "singleimage", "doubleimage", "tripleimage"  */}
-        {["singleimage", "doubleimage", "tripleimage"].map((type) => (
+        {/* "singleimage" */}
+      
+        {["singleimage"].map((type) => (
           <button
             key={type}
             type="button"
             className="bg text-white px-3 py-1 rounded mt-[20px] mr-[10px]"
             onClick={() => {
-              const newItem =
-                type === "singleimage" ? { type, value: "" } :
-                  type === "doubleimage" ? { type, value: ["", ""] } :
-                    { type, value: ["", "", ""] };
+              const newItem ={ type, value: "" } 
               setItems([...items, newItem]);
             }}
           >

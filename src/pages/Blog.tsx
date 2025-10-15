@@ -16,6 +16,7 @@ import { CiEdit } from "react-icons/ci";
 import { MdOutlineDelete } from "react-icons/md";
 import { Link } from "react-router-dom";
 import { FaPlus } from "react-icons/fa6";
+import { FaRegEye } from "react-icons/fa";
 
 export interface BlogItem {
   id: number;
@@ -259,6 +260,9 @@ const EditBlogPage: React.FC = () => {
                   </TableCell>
                   <TableCell>
                     <div className="flex items-center gap-1">
+                      <Link to={`/blog/${blog.urlName}`}>
+                        <FaRegEye className="color text-[22px] hover:scale-[1.1] duration-300" />
+                      </Link>
                       <Link to={`/editblog/${blog.urlName}`}>
                         <CiEdit className="color text-[22px] hover:scale-[1.1] duration-300" />
                       </Link>

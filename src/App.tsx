@@ -14,6 +14,7 @@ import EditBlogs from "./pages/EditBlogs";
 import AllMessages from "./pages/AllMessages";
 import MessagesDetail from "./pages/MessageDetail";
 import SubServices from "./pages/SubServices";
+import DetailBlog from "./pages/DetailBlog";
 
 const App: React.FC = () => {
   return (
@@ -30,6 +31,7 @@ const App: React.FC = () => {
           <Route path="/blog" element={<Blog />} />
           <Route path="/createblog" element={<CreateBlogs />} />
           <Route path="/editblog/:urlName" element={<EditBlogs />} />
+          <Route path="/blog/:urlName" element={<DetailBlog />} />
           <Route path="/messages" element={<AllMessages />} />
           <Route path="/message/:id" element={<MessagesDetail />} />
         </Route>
