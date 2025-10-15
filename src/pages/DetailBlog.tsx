@@ -201,7 +201,7 @@ const DetailBlog: React.FC = () => {
               <div key={i}>
                 <a
                   href={`#${h.id}`}
-                  className="para text-[#4b5563] hover:text-blue-500 cursor-pointer"
+                  className="para text-[#4b5563] hover:text-blue-500 cursor-pointer font-[400]"
                 >
                   {h.text}
                 </a>
