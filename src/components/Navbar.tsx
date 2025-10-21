@@ -23,7 +23,7 @@ export default function Navbar() {
   };
 
   return (
-    <section className={`${isAuthPage ? "hidden":"block"}  bg fixed top-0 left-0 w-full z-20`}>
+    <section className={`${isAuthPage ? "hidden":"block"}  bg fixed top-0 left-0 w-full z-[999]`}>
       <div
         className={`${
           toggle === false

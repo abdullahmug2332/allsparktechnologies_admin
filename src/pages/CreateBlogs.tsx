@@ -1,9 +1,17 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
 import { useSelector } from "react-redux";
 import type { RootState } from "../redux/store";
 import { useNavigate } from "react-router-dom";
 import { baseURL } from "../../API/baseURL";
 import Loader from "../components/Loader";
+import  ReactQuill,{ Quill } from "react-quill";
+import "react-quill/dist/quill.snow.css";
+// @ts-ignore
+import ImageUploader from "quill-image-uploader";
+Quill.register("modules/imageUploader", ImageUploader);
+
+
+
 
 
 const BlogEditor = () => {
@@ -19,7 +27,52 @@ const BlogEditor = () => {
   const [metaTitle, setMetaTitle] = useState("");
   const [metaDescription, setMetaDescription] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [items, setItems] = useState<any[]>([]);
+  const [content, setContent] = useState('');
+
+
+
+  const modules = useMemo(() => ({
+    toolbar: [
+      [{ header: [1, 2, 3, false] }],
+      ["bold", "italic", "underline", "strike"],
+      [{ color: [] }, { background: [] }],
+      [{ list: "ordered" }, { list: "bullet" }],
+      [{ align: [] }],
+      ["link", "image"],
+      ["clean"],
+    ],
+    imageUploader: {
+      upload: async (file: File) => {
+        const formData = new FormData();
+        formData.append("image", file);
+        const res = await fetch(`${baseURL}/blogs/upload-image`, {
+          method: "POST",
+          body: formData,
+        });
+        const data = await res.json();
+        if (!res.ok) throw new Error(data.error || "Upload failed");
+        return `${baseURL}/images/blogs/${data.filename}`;
+      },
+    },
+  }), []); // 👈 keeps it stable between renders
+  
+  const formats = useMemo(() => [
+    "header",
+    "bold",
+    "italic",
+    "underline",
+    "strike",
+    "list",
+    "bullet",
+    "align",
+    "link",
+    "image",
+    "video",
+    "color",
+    "background",
+  ], []);
+
+
 
   type Faq = { question: string; answer: string };
   const [faqs, setFaqs] = useState<Faq[]>([]);
@@ -44,35 +97,6 @@ const BlogEditor = () => {
     }
   };
 
-  const uploadImage = async (file: File): Promise<string | null> => {
-    try {
-      const formData = new FormData();
-      formData.append("image", file);
-
-      const res = await fetch(`${baseURL}/blogs/upload-image`, {
-        method: "POST",
-        body: formData,
-      });
-
-      const data = await res.json();
-      return data.filename; // save this in `items`
-    } catch (err) {
-      console.error("Image upload failed:", err);
-      return null;
-    }
-  };
-
-  // Single Image
-  const handleSingleImageChange = async (file: File, idx: number) => {
-    const filename = await uploadImage(file);
-    if (filename) {
-      const copy = [...items];
-      (copy[idx] as any).value = filename;
-      setItems(copy);
-    }
-  };
-
-
 
 
   // ✅ Save blog
@@ -92,7 +116,7 @@ const BlogEditor = () => {
     formData.append("metaTitle", metaTitle);
     formData.append("metaDescription", metaDescription);
     formData.append("faqs", JSON.stringify(cleanedFaqs));
-    formData.append("items", JSON.stringify(items));
+    formData.append("content", content);
 
     if (imageFile) formData.append("image", imageFile);
 
@@ -118,13 +142,7 @@ const BlogEditor = () => {
       alert("❌ Something went wrong. Please try again.");
     }
   };
-  function swap<T>(arr: T[], from: number, to: number): T[] {
-    const copy = [...arr];
-    const temp = copy[from];
-    copy[from] = copy[to];
-    copy[to] = temp;
-    return copy;
-  }
+
   return (
     <div
       className={`${toggle === false
@@ -213,388 +231,15 @@ const BlogEditor = () => {
         </button>
       </div>
 
-      <div>
-        {/* Existing Items */}
-        {items.map((item, i) => (
-          <div key={i} className="border-2 border-[#18185E] p-3 rounded mb-3">
-            {/* H1-H3-P-Strong */}
-            {["h1", "h2", "h3", "strong"].includes(item.type) && (
-              <div>
-                <p>{item.type.toUpperCase()}</p>
-                <input
-                  type="text"
-                  placeholder={`Enter ${item.type.toUpperCase()} text`}
-                  value={item?.value}
-                  onChange={(e) => {
-                    const copy = [...items];
-                    (copy[i] as any).value = e.target.value;
-                    setItems(copy);
-                  }}
-                  className="border w-full p-2 rounded"
-                />
-                <div className="flex gap-2 mt-2">
-                  {/* Move Up */}
-                  {i > 0 && (
-                    <button
-                      type="button"
-                      className="bg-gray-200 text-sm px-2 py-1 rounded"
-                      onClick={() => setItems(swap(items, i, i - 1))}
-                    >
-                      ↑ Move Up
-                    </button>
-                  )}
 
-                  {/* Move Down */}
-                  {i < items.length - 1 && (
-                    <button
-                      type="button"
-                      className="bg-gray-200 text-sm px-2 py-1 rounded"
-                      onClick={() => setItems(swap(items, i, i + 1))}
-                    >
-                      ↓ Move Down
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* paragraphs  */}
-            {["p"].includes(item.type) && (
-              <div>
-                <p>{item.type.toUpperCase()}</p>
-                <textarea placeholder={`Enter ${item.type.toUpperCase()} text`}
-                  value={item?.value}
-                  onChange={(e) => {
-                    const copy = [...items];
-                    (copy[i] as any).value = e.target.value;
-                    setItems(copy);
-                  }}
-                  className="border w-full p-2 rounded"></textarea>
-                <div className="flex gap-2 mt-2">
-                  {/* Move Up */}
-                  {i > 0 && (
-                    <button
-                      type="button"
-                      className="bg-gray-200 text-sm px-2 py-1 rounded"
-                      onClick={() => setItems(swap(items, i, i - 1))}
-                    >
-                      ↑ Move Up
-                    </button>
-                  )}
-
-                  {/* Move Down */}
-                  {i < items.length - 1 && (
-                    <button
-                      type="button"
-                      className="bg-gray-200 text-sm px-2 py-1 rounded"
-                      onClick={() => setItems(swap(items, i, i + 1))}
-                    >
-                      ↓ Move Down
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* UL / OL */}
-            {["ul", "ol"].includes(item.type) && (
-              <div>
-                <p>{item.type.toUpperCase()}</p>
-                {(item?.value as string[]).map((li, liIdx) => (
-                  <input
-                    key={liIdx}
-                    type="text"
-                    placeholder={`List item ${liIdx + 1}`}
-                    value={li}
-                    onChange={(e) => {
-                      const copy = [...items];
-                      (copy[i] as any).value[liIdx] = e.target.value;
-                      setItems(copy);
-                    }}
-                    className="border w-full p-2 rounded mt-1"
-                  />
-                ))}
-                <button
-                  type="button"
-                  className="bg-gray-100 px-2 py-1 rounded mt-2"
-                  onClick={() => {
-                    const copy = [...items];
-                    (copy[i] as any).value.push("");
-                    setItems(copy);
-                  }}
-                >
-                  + Add List Item
-                </button>
-                <div className="flex gap-2 mt-2">
-                  {/* Move Up */}
-                  {i > 0 && (
-                    <button
-                      type="button"
-                      className="bg-gray-200 text-sm px-2 py-1 rounded"
-                      onClick={() => setItems(swap(items, i, i - 1))}
-                    >
-                      ↑ Move Up
-                    </button>
-                  )}
-
-                  {/* Move Down */}
-                  {i < items.length - 1 && (
-                    <button
-                      type="button"
-                      className="bg-gray-200 text-sm px-2 py-1 rounded"
-                      onClick={() => setItems(swap(items, i, i + 1))}
-                    >
-                      ↓ Move Down
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
-
-            {/* TABLE */}
-            {item.type === "table" && (
-              <div>
-                <h3 className="font-semibold">Table Headers</h3>
-                {(item.headers as string[]).map((h, hIdx) => (
-                  <div key={hIdx} className="flex items-center gap-2 mt-1">
-                    <input
-                      type="text"
-                      placeholder={`Header ${hIdx + 1}`}
-                      value={h}
-                      onChange={(e) => {
-                        const copy = [...items];
-                        (copy[i] as any).headers[hIdx] = e.target.value;
-                        setItems(copy);
-                      }}
-                      className="border w-full p-2 rounded"
-                    />
-                    <button
-                      type="button"
-                      className="bg-red-100 px-2 py-1 rounded text-red-600"
-                      onClick={() => {
-                        const copy = [...items];
-                        (copy[i] as any).headers.splice(hIdx, 1);
-                        // also remove that column from all rows
-                        (copy[i] as any).rows = (copy[i] as any).rows.map((row: string[]) =>
-                          row.filter((_, idx) => idx !== hIdx)
-                        );
-                        setItems(copy);
-                      }}
-                    >
-                      Remove
-                    </button>
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  className="bg-gray-100 px-2 py-1 rounded mt-2"
-                  onClick={() => {
-                    const copy = [...items];
-                    (copy[i] as any).headers.push("");
-                    // add empty col in each row as well
-                    (copy[i] as any).rows = (copy[i] as any).rows.map((row: string[]) => [...row, ""]);
-                    setItems(copy);
-                  }}
-                >
-                  + Add Header
-                </button>
-
-                <h3 className="font-semibold mt-3">Table Rows</h3>
-                {(item.rows as string[][]).map((row, rIdx) => (
-                  <div key={rIdx} className="flex gap-2 mt-1">
-                    {row.map((cell, cIdx) => (
-                      <div key={cIdx} className="flex items-center gap-1 flex-1">
-                        <input
-                          type="text"
-                          placeholder={`Row ${rIdx + 1} Col ${cIdx + 1}`}
-                          value={cell}
-                          onChange={(e) => {
-                            const copy = [...items];
-                            (copy[i] as any).rows[rIdx][cIdx] = e.target.value;
-                            setItems(copy);
-                          }}
-                          className="border p-1 rounded w-full"
-                        />
-                        <button
-                          type="button"
-                          className="bg-red-100 px-2 rounded text-red-600"
-                          onClick={() => {
-                            const copy = [...items];
-                            (copy[i] as any).rows[rIdx].splice(cIdx, 1);
-                            setItems(copy);
-                          }}
-                        >
-                          ✕
-                        </button>
-                      </div>
-                    ))}
-                    <button
-                      type="button"
-                      className="bg-gray-100 px-2 rounded"
-                      onClick={() => {
-                        const copy = [...items];
-                        (copy[i] as any).rows[rIdx].push("");
-                        setItems(copy);
-                      }}
-                    >
-                      + Col
-                    </button>
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  className="bg-gray-100 px-2 py-1 rounded mt-2"
-                  onClick={() => {
-                    const copy = [...items];
-                    // create new row with same number of cols as headers
-                    const newRow = Array((copy[i] as any).headers.length).fill("");
-                    (copy[i] as any).rows.push(newRow);
-                    setItems(copy);
-                  }}
-                >
-                  + Add Row
-                </button>
-                <div className="flex gap-2 mt-2">
-                  {/* Move Up */}
-                  {i > 0 && (
-                    <button
-                      type="button"
-                      className="bg-gray-200 text-sm px-2 py-1 rounded"
-                      onClick={() => setItems(swap(items, i, i - 1))}
-                    >
-                      ↑ Move Up
-                    </button>
-                  )}
-
-                  {/* Move Down */}
-                  {i < items.length - 1 && (
-                    <button
-                      type="button"
-                      className="bg-gray-200 text-sm px-2 py-1 rounded"
-                      onClick={() => setItems(swap(items, i, i + 1))}
-                    >
-                      ↓ Move Down
-                    </button>
-                  )}
-                </div>
-              </div>
-            )}
-
-
-            {/* Single Image */}
-            {item.type === "singleimage" && (
-              <div>
-                <p>{"Single Image"}</p>
-                <input
-                  type="file"
-                  accept="image/*"
-                  onChange={(e) => {
-                    const file = e.target.files?.[0];
-                    if (file) {
-                      // show preview immediately
-                      const previewUrl = URL.createObjectURL(file);
-                      const copy = [...items];
-                      (copy[i] as any).value = previewUrl;  // for preview
-                      setItems(copy);
-
-                      // upload to server
-                      handleSingleImageChange(file, i);
-                    }
-                  }}
-                />
-                <div className="flex gap-2 mt-2">
-                  {/* Move Up */}
-                  {i > 0 && (
-                    <button
-                      type="button"
-                      className="bg-gray-200 text-sm px-2 py-1 rounded"
-                      onClick={() => setItems(swap(items, i, i - 1))}
-                    >
-                      ↑ Move Up
-                    </button>
-                  )}
-
-                  {/* Move Down */}
-                  {i < items.length - 1 && (
-                    <button
-                      type="button"
-                      className="bg-gray-200 text-sm px-2 py-1 rounded"
-                      onClick={() => setItems(swap(items, i, i + 1))}
-                    >
-                      ↓ Move Down
-                    </button>
-                  )}
-                </div>
-                {/* show preview if exists */}
-                {(item.value as string) && (
-                  <img
-                    src={
-                      item.value.startsWith("blob:")
-                        ? item.value // local preview
-                        : `${baseURL}/images/blogs/${item.value}` // saved image
-                    }
-                    alt="preview"
-                    className="w-40 h-40 object-cover mt-2 rounded"
-                  />
-                )}
-              </div>
-
-            )}
-
-            
-
-
-            
-            <button //remove btn
-              type="button"
-              className="text-red-600 text-sm mt-2"
-              onClick={() => setItems(items.filter((_, idx) => idx !== i))}
-            >
-              Remove Block
-            </button>
-          </div>
-        ))}
-
-        {/* 🚀 Add New Block Buttons */}
-        <div className="mt-4 flex flex-wrap gap-2">
-          {["h1", "h2", "h3", "p", "strong", "ul", "ol", "table"].map((type) => (
-            <button
-              key={type}
-              type="button"
-              className="bg  text-white px-3 py-1 rounded"
-              onClick={() => {
-                const newItem =
-                  type === "ul" || type === "ol"
-                    ? { type, value: [""] }
-                    : type === "table"
-                      ? { type, headers: [""], rows: [[""]] }
-                      : { type, value: "" };
-                setItems([...items, newItem]);
-              }}
-            >
-              + {type.toUpperCase()}
-            </button>
-          ))}
-        </div>
-
-        {/* "singleimage" */}
-      
-        {["singleimage"].map((type) => (
-          <button
-            key={type}
-            type="button"
-            className="bg text-white px-3 py-1 rounded mt-[20px] mr-[10px]"
-            onClick={() => {
-              const newItem ={ type, value: "" } 
-              setItems([...items, newItem]);
-            }}
-          >
-            + {type.toUpperCase()}
-          </button>
-        ))}
-
-      </div>
-
+      <ReactQuill
+        className="relative z-50 "
+        theme="snow"
+        value={content}
+        onChange={setContent}
+        modules={modules}
+        formats={formats}
+      />
 
 
       <button onClick={handleSave} className="bg text-white px-4 py-2 rounded mt-[10px] relative top-[20px]">

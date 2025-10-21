@@ -1,4 +1,4 @@
-@import "quill-better-table/dist/quill-better-table.css";
+
 
 .color{
    color:#18185E ; 
@@ -12,11 +12,8 @@
 }
 p{
     font-family: "Plus Jakarta Sans", "Plus Jakarta Sans Fallback", sans-serif;
-    color:#18185E;
 }
-p,h1,h2,h3,h4,h5,h6{
-    color:#18185E;
-}
+
 input, textarea{
     @apply my-[5px] border px-[10px] border w-[100%] py-[10px] rounded-[5px] my-[5px]
 }
@@ -81,7 +78,7 @@ textarea{
 
 }
 
-.blogsdata ul {
+.blogcontent ul {
   list-style-type: disc;
   /* bullets */
   padding-left: 1.5rem;
@@ -90,24 +87,24 @@ textarea{
 }
 
 
-ul {
+.blogcontent ul {
   list-style-type: disc;
 }
 
-ol {
+.blogcontent ol {
   list-style-type: decimal;
   padding-left: 1.5rem;
   margin-bottom: 1rem;
 }
 
-.h1 {
+.blogcontent h1 {
   font-size: 32px;
   margin-top: 15px;
   margin-bottom: 10px;
   font-weight: 900;
 }
 
-.h2 {
+.blogcontent h2 {
   font-size: 24px;
   margin-top: 14px;
   margin-bottom: 8px;
@@ -115,7 +112,7 @@ ol {
 
 }
 
-.h3 {
+.blogcontent h3 {
   font-size: 20px;
   font-weight: 700;
   margin-top: 12px;
@@ -125,20 +122,20 @@ ol {
 
 
 
-.ul,
-.ol {
+.blogcontent ul,
+.blogcontent ol {
   margin-top: 12px;
   margin-bottom: 7px;
   font-weight: 700;
 
 }
 
-.strong {
+.blogcontent strong {
   margin-top: 9px;
   margin-bottom: 5px;
 }
 
-.p {
+.blogcontent p {
   margin-top: 5px;
   margin-bottom: 5px;
 }
