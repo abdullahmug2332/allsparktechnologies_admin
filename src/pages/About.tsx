@@ -294,7 +294,7 @@ const EditAboutData: React.FC = () => {
             </button>
           </div>
           {/* Metadata JSON */}
-          <div>
+          {/* <div>
             <h2 className="text-[18px] font-semibold mt-10">
               Metadata (JSON):
             </h2>
@@ -303,10 +303,10 @@ const EditAboutData: React.FC = () => {
               value={metadataText}
               onChange={(e) => setMetadataText(e.target.value)}
             />
-          </div>
+          </div> */}
 
           {/* Script JSON */}
-          <div>
+          {/* <div>
             <h2 className="text-[18px] font-semibold mt-10">
               Script (JSON-LD):
             </h2>
@@ -315,14 +315,14 @@ const EditAboutData: React.FC = () => {
               value={scriptText}
               onChange={(e) => setScriptText(e.target.value)}
             />
-          </div>
+          </div> */}
 
-          <button
+          {/* <button
             className="bg text-white px-4 py-2 rounded mt-4"
             onClick={handleSave}
           >
             Save Changes
-          </button>
+          </button> */}
         </section>
       </div>
     </>

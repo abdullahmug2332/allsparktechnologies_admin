@@ -197,22 +197,34 @@ const EditHomeData: React.FC = () => {
             {/* Hero Section */}
             <section>
               <h2 className="color text-[32px] font-semibold">Hero Section</h2>
+
               {data.hero.map((hero, index) => (
-                <div key={index} className="border p-4 rounded-md my-2 space-y-2 relative">
-                  <h3 className="text-[18px] font-semibold">Hero {index + 1}</h3>
+                <div
+                  key={index}
+                  className="border p-4 rounded-md my-2 space-y-2 relative"
+                >
+                  <h3 className="text-[18px] font-semibold">
+                    Hero {index + 1}
+                  </h3>
+
                   {/* Background Image */}
                   <div>
                     <img
                       src={`${baseURL}/images/home/${hero.bg}`}
                       className="h-[200px] object-cover"
+                      alt="Hero Background"
                     />
                     <input
                       type="file"
-                      onChange={(e) => handleDynamicImageUpload(e, `hero[${index}].bg`)}
-
+                      onChange={(e) =>
+                        handleDynamicImageUpload(e, `hero[${index}].bg`)
+                      }
                     />
-                    <p className="text-[12px] underline">(First save then upload the image otherwise error)</p>
+                    <p className="text-[12px] underline">
+                      (First save then upload the image otherwise error)
+                    </p>
                   </div>
+
                   {/* Top Button */}
                   <input
                     className="block w-full p-2 border"
@@ -234,6 +246,7 @@ const EditHomeData: React.FC = () => {
                       setData({ ...data, hero: newHero });
                     }}
                   />
+
                   {/* Title */}
                   <input
                     className="block w-full p-2 border"
@@ -245,6 +258,7 @@ const EditHomeData: React.FC = () => {
                       setData({ ...data, hero: newHero });
                     }}
                   />
+
                   {/* Description */}
                   <textarea
                     className="block w-full p-2 border"
@@ -256,6 +270,7 @@ const EditHomeData: React.FC = () => {
                       setData({ ...data, hero: newHero });
                     }}
                   />
+
                   {/* Bottom Button */}
                   <input
                     className="block w-full p-2 border"
@@ -277,47 +292,91 @@ const EditHomeData: React.FC = () => {
                       setData({ ...data, hero: newHero });
                     }}
                   />
-                  {/* Remove Hero */}
-                  <button
-                    className="absolute top-2 right-2 bg text-white px-3 py-1 rounded"
-                    onClick={() => {
-                      const newHero = data.hero.filter((_, i) => i !== index);
-                      setData({ ...data, hero: newHero });
-                    }}
-                  >
-                    Remove
-                  </button>
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-2 mt-3">
+                    {/* Move Up */}
+                    <button
+                      className="bg text-white px-3 py-1 rounded disabled:opacity-40"
+                      onClick={() => {
+                        if (index > 0) {
+                          const newHero = [...data.hero];
+                          const temp = newHero[index];
+                          newHero[index] = newHero[index - 1];
+                          newHero[index - 1] = temp;
+                          setData({ ...data, hero: newHero });
+                        }
+                      }}
+                      disabled={index === 0}
+                    >
+                      ↑ Move Up
+                    </button>
+
+                    {/* Move Down */}
+                    <button
+                      className="bg text-white px-3 py-1 rounded disabled:opacity-40"
+                      onClick={() => {
+                        if (index < data.hero.length - 1) {
+                          const newHero = [...data.hero];
+                          const temp = newHero[index];
+                          newHero[index] = newHero[index + 1];
+                          newHero[index + 1] = temp;
+                          setData({ ...data, hero: newHero });
+                        }
+                      }}
+                      disabled={index === data.hero.length - 1}
+                    >
+                      ↓ Move Down
+                    </button>
+
+                    {/* Remove */}
+                    <button
+                      className="bg-red-600 text-white px-3 py-1 rounded ml-auto"
+                      onClick={() => {
+                        const newHero = data.hero.filter((_, i) => i !== index);
+                        setData({ ...data, hero: newHero });
+                      }}
+                    >
+                      Remove
+                    </button>
+                  </div>
                 </div>
               ))}
-              <button
-                className="bg text-white px-4 py-2 rounded"
-                onClick={() => {
-                  setData({
-                    ...data,
-                    hero: [
-                      ...data.hero,
-                      {
-                        bg: "",
-                        topBtn: "",
-                        topBtnLink: "",
-                        title: "",
-                        des: "",
-                        bottomBtn: "",
-                        bottomBtnLink: "",
-                      },
-                    ],
-                  });
-                }}
-              >
-                Add Hero
-              </button>
-              <button
-                className="bg text-white px-4 py-2 rounded ml-2"
-                onClick={handleSave}
-              >
-                Save Changes
-              </button>
+
+              {/* Add + Save */}
+              <div className="flex gap-2 mt-4">
+                <button
+                  className="bg text-white px-4 py-2 rounded"
+                  onClick={() => {
+                    setData({
+                      ...data,
+                      hero: [
+                        ...data.hero,
+                        {
+                          bg: "",
+                          topBtn: "",
+                          topBtnLink: "",
+                          title: "",
+                          des: "",
+                          bottomBtn: "",
+                          bottomBtnLink: "",
+                        },
+                      ],
+                    });
+                  }}
+                >
+                  Add Hero
+                </button>
+
+                <button
+                  className="bg text-white px-4 py-2 rounded"
+                  onClick={handleSave}
+                >
+                  Save Changes
+                </button>
+              </div>
             </section>
+
           </div>
 
           {/* Services */}
@@ -432,7 +491,7 @@ const EditHomeData: React.FC = () => {
                           }
                         />
                         <p className="text-[12px] underline">(First save then upload the image otherwise error)</p>
-                          
+
                         {/* Remove Button */}
                         <button
                           onClick={() => {
@@ -1357,7 +1416,7 @@ const EditHomeData: React.FC = () => {
           </div>
 
           {/* Metadata JSON */}
-          <div>
+          {/* <div>
             <h2 className="text-[18px] font-semibold mt-10">
               Metadata (JSON):
             </h2>
@@ -1366,10 +1425,10 @@ const EditHomeData: React.FC = () => {
               value={metadataText}
               onChange={(e) => setMetadataText(e.target.value)}
             />
-          </div>
+          </div> */}
 
           {/* Script JSON */}
-          <div>
+          {/* <div>
             <h2 className="text-[18px] font-semibold mt-10">
               Script (JSON-LD):
             </h2>
@@ -1378,14 +1437,14 @@ const EditHomeData: React.FC = () => {
               value={scriptText}
               onChange={(e) => setScriptText(e.target.value)}
             />
-          </div>
+          </div> */}
 
-          <button
+          {/* <button
             className="bg text-white px-4 py-2 rounded mt-4"
             onClick={handleSave}
           >
             Save Changes
-          </button>
+          </button> */}
         </div>
       </div>
     </>
