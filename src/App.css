@@ -165,3 +165,12 @@ textarea{
 .blogcontent {
   width: 100%;
 }
+.ql-toolbar {
+  @apply !sticky top-[60px] z-50 bg-white border-b border-gray-200;
+}
+.ql-container {
+  resize: vertical; /* allows vertical resizing */
+  overflow: auto;
+  min-height: 150px;
+  max-height: 600px; /* optional limit */
+}

@@ -282,14 +282,15 @@ const EditBlogEditor = () => {
         Update Blog
       </button>
 
-      <ReactQuill
-       
-        theme="snow"
-        value={content}
-        onChange={setContent}
-        modules={modules}
-        formats={formats}
-      />
+      <div className="relative">
+        <ReactQuill
+          theme="snow"
+          value={content}
+          onChange={setContent}
+          modules={modules}
+          formats={formats}
+        />
+      </div>
 
 
       {/* Update button */}
